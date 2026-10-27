@@ -3,6 +3,8 @@
 package taskreport
 
 import (
+	"fmt"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -20,6 +22,12 @@ const (
 	FieldFailed = "failed"
 	// FieldEnd holds the string denoting the end field in the database.
 	FieldEnd = "end"
+	// FieldStartedAt holds the string denoting the started_at field in the database.
+	FieldStartedAt = "started_at"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
+	// FieldTimeout holds the string denoting the timeout field in the database.
+	FieldTimeout = "timeout"
 	// EdgeProfileissue holds the string denoting the profileissue edge name in mutations.
 	EdgeProfileissue = "profileissue"
 	// EdgeTask holds the string denoting the task edge name in mutations.
@@ -49,6 +57,9 @@ var Columns = []string{
 	FieldStdError,
 	FieldFailed,
 	FieldEnd,
+	FieldStartedAt,
+	FieldStatus,
+	FieldTimeout,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "task_reports"
@@ -82,7 +93,39 @@ var (
 	DefaultFailed bool
 	// DefaultEnd holds the default value on creation for the "end" field.
 	DefaultEnd string
+	// DefaultStartedAt holds the default value on creation for the "started_at" field.
+	DefaultStartedAt string
+	// DefaultTimeout holds the default value on creation for the "timeout" field.
+	DefaultTimeout bool
 )
+
+// Status defines the type for the "status" enum field.
+type Status string
+
+// StatusPending is the default value of the Status enum.
+const DefaultStatus = StatusPending
+
+// Status values.
+const (
+	StatusPending   Status = "pending"
+	StatusRunning   Status = "running"
+	StatusCompleted Status = "completed"
+	StatusFailed    Status = "failed"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s Status) error {
+	switch s {
+	case StatusPending, StatusRunning, StatusCompleted, StatusFailed:
+		return nil
+	default:
+		return fmt.Errorf("taskreport: invalid enum value for status field: %q", s)
+	}
+}
 
 // OrderOption defines the ordering options for the TaskReport queries.
 type OrderOption func(*sql.Selector)
@@ -110,6 +153,21 @@ func ByFailed(opts ...sql.OrderTermOption) OrderOption {
 // ByEnd orders the results by the end field.
 func ByEnd(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEnd, opts...).ToFunc()
+}
+
+// ByStartedAt orders the results by the started_at field.
+func ByStartedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStartedAt, opts...).ToFunc()
+}
+
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByTimeout orders the results by the timeout field.
+func ByTimeout(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTimeout, opts...).ToFunc()
 }
 
 // ByProfileissueField orders the results by profileissue field.

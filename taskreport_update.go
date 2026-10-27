@@ -104,6 +104,66 @@ func (tru *TaskReportUpdate) ClearEnd() *TaskReportUpdate {
 	return tru
 }
 
+// SetStartedAt sets the "started_at" field.
+func (tru *TaskReportUpdate) SetStartedAt(s string) *TaskReportUpdate {
+	tru.mutation.SetStartedAt(s)
+	return tru
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (tru *TaskReportUpdate) SetNillableStartedAt(s *string) *TaskReportUpdate {
+	if s != nil {
+		tru.SetStartedAt(*s)
+	}
+	return tru
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (tru *TaskReportUpdate) ClearStartedAt() *TaskReportUpdate {
+	tru.mutation.ClearStartedAt()
+	return tru
+}
+
+// SetStatus sets the "status" field.
+func (tru *TaskReportUpdate) SetStatus(t taskreport.Status) *TaskReportUpdate {
+	tru.mutation.SetStatus(t)
+	return tru
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (tru *TaskReportUpdate) SetNillableStatus(t *taskreport.Status) *TaskReportUpdate {
+	if t != nil {
+		tru.SetStatus(*t)
+	}
+	return tru
+}
+
+// ClearStatus clears the value of the "status" field.
+func (tru *TaskReportUpdate) ClearStatus() *TaskReportUpdate {
+	tru.mutation.ClearStatus()
+	return tru
+}
+
+// SetTimeout sets the "timeout" field.
+func (tru *TaskReportUpdate) SetTimeout(b bool) *TaskReportUpdate {
+	tru.mutation.SetTimeout(b)
+	return tru
+}
+
+// SetNillableTimeout sets the "timeout" field if the given value is not nil.
+func (tru *TaskReportUpdate) SetNillableTimeout(b *bool) *TaskReportUpdate {
+	if b != nil {
+		tru.SetTimeout(*b)
+	}
+	return tru
+}
+
+// ClearTimeout clears the value of the "timeout" field.
+func (tru *TaskReportUpdate) ClearTimeout() *TaskReportUpdate {
+	tru.mutation.ClearTimeout()
+	return tru
+}
+
 // SetProfileissueID sets the "profileissue" edge to the ProfileIssue entity by ID.
 func (tru *TaskReportUpdate) SetProfileissueID(id int) *TaskReportUpdate {
 	tru.mutation.SetProfileissueID(id)
@@ -186,6 +246,16 @@ func (tru *TaskReportUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (tru *TaskReportUpdate) check() error {
+	if v, ok := tru.mutation.Status(); ok {
+		if err := taskreport.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "TaskReport.status": %w`, err)}
+		}
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (tru *TaskReportUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TaskReportUpdate {
 	tru.modifiers = append(tru.modifiers, modifiers...)
@@ -193,6 +263,9 @@ func (tru *TaskReportUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Ta
 }
 
 func (tru *TaskReportUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := tru.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(taskreport.Table, taskreport.Columns, sqlgraph.NewFieldSpec(taskreport.FieldID, field.TypeInt))
 	if ps := tru.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -221,6 +294,24 @@ func (tru *TaskReportUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tru.mutation.EndCleared() {
 		_spec.ClearField(taskreport.FieldEnd, field.TypeString)
+	}
+	if value, ok := tru.mutation.StartedAt(); ok {
+		_spec.SetField(taskreport.FieldStartedAt, field.TypeString, value)
+	}
+	if tru.mutation.StartedAtCleared() {
+		_spec.ClearField(taskreport.FieldStartedAt, field.TypeString)
+	}
+	if value, ok := tru.mutation.Status(); ok {
+		_spec.SetField(taskreport.FieldStatus, field.TypeEnum, value)
+	}
+	if tru.mutation.StatusCleared() {
+		_spec.ClearField(taskreport.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := tru.mutation.Timeout(); ok {
+		_spec.SetField(taskreport.FieldTimeout, field.TypeBool, value)
+	}
+	if tru.mutation.TimeoutCleared() {
+		_spec.ClearField(taskreport.FieldTimeout, field.TypeBool)
 	}
 	if tru.mutation.ProfileissueCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -376,6 +467,66 @@ func (truo *TaskReportUpdateOne) ClearEnd() *TaskReportUpdateOne {
 	return truo
 }
 
+// SetStartedAt sets the "started_at" field.
+func (truo *TaskReportUpdateOne) SetStartedAt(s string) *TaskReportUpdateOne {
+	truo.mutation.SetStartedAt(s)
+	return truo
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (truo *TaskReportUpdateOne) SetNillableStartedAt(s *string) *TaskReportUpdateOne {
+	if s != nil {
+		truo.SetStartedAt(*s)
+	}
+	return truo
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (truo *TaskReportUpdateOne) ClearStartedAt() *TaskReportUpdateOne {
+	truo.mutation.ClearStartedAt()
+	return truo
+}
+
+// SetStatus sets the "status" field.
+func (truo *TaskReportUpdateOne) SetStatus(t taskreport.Status) *TaskReportUpdateOne {
+	truo.mutation.SetStatus(t)
+	return truo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (truo *TaskReportUpdateOne) SetNillableStatus(t *taskreport.Status) *TaskReportUpdateOne {
+	if t != nil {
+		truo.SetStatus(*t)
+	}
+	return truo
+}
+
+// ClearStatus clears the value of the "status" field.
+func (truo *TaskReportUpdateOne) ClearStatus() *TaskReportUpdateOne {
+	truo.mutation.ClearStatus()
+	return truo
+}
+
+// SetTimeout sets the "timeout" field.
+func (truo *TaskReportUpdateOne) SetTimeout(b bool) *TaskReportUpdateOne {
+	truo.mutation.SetTimeout(b)
+	return truo
+}
+
+// SetNillableTimeout sets the "timeout" field if the given value is not nil.
+func (truo *TaskReportUpdateOne) SetNillableTimeout(b *bool) *TaskReportUpdateOne {
+	if b != nil {
+		truo.SetTimeout(*b)
+	}
+	return truo
+}
+
+// ClearTimeout clears the value of the "timeout" field.
+func (truo *TaskReportUpdateOne) ClearTimeout() *TaskReportUpdateOne {
+	truo.mutation.ClearTimeout()
+	return truo
+}
+
 // SetProfileissueID sets the "profileissue" edge to the ProfileIssue entity by ID.
 func (truo *TaskReportUpdateOne) SetProfileissueID(id int) *TaskReportUpdateOne {
 	truo.mutation.SetProfileissueID(id)
@@ -471,6 +622,16 @@ func (truo *TaskReportUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (truo *TaskReportUpdateOne) check() error {
+	if v, ok := truo.mutation.Status(); ok {
+		if err := taskreport.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "TaskReport.status": %w`, err)}
+		}
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (truo *TaskReportUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TaskReportUpdateOne {
 	truo.modifiers = append(truo.modifiers, modifiers...)
@@ -478,6 +639,9 @@ func (truo *TaskReportUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder))
 }
 
 func (truo *TaskReportUpdateOne) sqlSave(ctx context.Context) (_node *TaskReport, err error) {
+	if err := truo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(taskreport.Table, taskreport.Columns, sqlgraph.NewFieldSpec(taskreport.FieldID, field.TypeInt))
 	id, ok := truo.mutation.ID()
 	if !ok {
@@ -523,6 +687,24 @@ func (truo *TaskReportUpdateOne) sqlSave(ctx context.Context) (_node *TaskReport
 	}
 	if truo.mutation.EndCleared() {
 		_spec.ClearField(taskreport.FieldEnd, field.TypeString)
+	}
+	if value, ok := truo.mutation.StartedAt(); ok {
+		_spec.SetField(taskreport.FieldStartedAt, field.TypeString, value)
+	}
+	if truo.mutation.StartedAtCleared() {
+		_spec.ClearField(taskreport.FieldStartedAt, field.TypeString)
+	}
+	if value, ok := truo.mutation.Status(); ok {
+		_spec.SetField(taskreport.FieldStatus, field.TypeEnum, value)
+	}
+	if truo.mutation.StatusCleared() {
+		_spec.ClearField(taskreport.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := truo.mutation.Timeout(); ok {
+		_spec.SetField(taskreport.FieldTimeout, field.TypeBool, value)
+	}
+	if truo.mutation.TimeoutCleared() {
+		_spec.ClearField(taskreport.FieldTimeout, field.TypeBool)
 	}
 	if truo.mutation.ProfileissueCleared() {
 		edge := &sqlgraph.EdgeSpec{

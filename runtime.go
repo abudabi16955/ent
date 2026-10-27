@@ -746,6 +746,10 @@ func init() {
 	taskDescPackageBrewType := taskFields[93].Descriptor()
 	// task.DefaultPackageBrewType holds the default value on creation for the package_brew_type field.
 	task.DefaultPackageBrewType = taskDescPackageBrewType.Default.(string)
+	// taskDescTimeout is the schema descriptor for timeout field.
+	taskDescTimeout := taskFields[94].Descriptor()
+	// task.DefaultTimeout holds the default value on creation for the timeout field.
+	task.DefaultTimeout = taskDescTimeout.Default.(int)
 	taskreportFields := schema.TaskReport{}.Fields()
 	_ = taskreportFields
 	// taskreportDescStdOutput is the schema descriptor for std_output field.
@@ -764,6 +768,14 @@ func init() {
 	taskreportDescEnd := taskreportFields[3].Descriptor()
 	// taskreport.DefaultEnd holds the default value on creation for the end field.
 	taskreport.DefaultEnd = taskreportDescEnd.Default.(string)
+	// taskreportDescStartedAt is the schema descriptor for started_at field.
+	taskreportDescStartedAt := taskreportFields[4].Descriptor()
+	// taskreport.DefaultStartedAt holds the default value on creation for the started_at field.
+	taskreport.DefaultStartedAt = taskreportDescStartedAt.Default.(string)
+	// taskreportDescTimeout is the schema descriptor for timeout field.
+	taskreportDescTimeout := taskreportFields[6].Descriptor()
+	// taskreport.DefaultTimeout holds the default value on creation for the timeout field.
+	taskreport.DefaultTimeout = taskreportDescTimeout.Default.(bool)
 	tenantFields := schema.Tenant{}.Fields()
 	_ = tenantFields
 	// tenantDescCreated is the schema descriptor for created field.
