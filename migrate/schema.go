@@ -950,6 +950,7 @@ var (
 		{Name: "package_branch", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "package_arch", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "package_brew_type", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "timeout", Type: field.TypeInt, Nullable: true, Default: 0},
 		{Name: "profile_tasks", Type: field.TypeInt, Nullable: true},
 	}
 	// TasksTable holds the schema information for the "tasks" table.
@@ -960,7 +961,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "tasks_profiles_tasks",
-				Columns:    []*schema.Column{TasksColumns[95]},
+				Columns:    []*schema.Column{TasksColumns[96]},
 				RefColumns: []*schema.Column{ProfilesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
@@ -973,6 +974,9 @@ var (
 		{Name: "std_error", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "failed", Type: field.TypeBool, Default: false},
 		{Name: "end", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "started_at", Type: field.TypeString, Nullable: true, Default: ""},
+		{Name: "status", Type: field.TypeString, Nullable: true, Default: "pending"},
+		{Name: "timeout", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "profile_issue_tasksreports", Type: field.TypeInt, Nullable: true},
 		{Name: "task_reports", Type: field.TypeInt, Nullable: true},
 	}
@@ -984,13 +988,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "task_reports_profile_issues_tasksreports",
-				Columns:    []*schema.Column{TaskReportsColumns[5]},
+				Columns:    []*schema.Column{TaskReportsColumns[8]},
 				RefColumns: []*schema.Column{ProfileIssuesColumns[0]},
 				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "task_reports_tasks_reports",
-				Columns:    []*schema.Column{TaskReportsColumns[6]},
+				Columns:    []*schema.Column{TaskReportsColumns[9]},
 				RefColumns: []*schema.Column{TasksColumns[0]},
 				OnDelete:   schema.Cascade,
 			},

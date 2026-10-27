@@ -18,6 +18,9 @@ func (TaskReport) Fields() []ent.Field {
 		field.String("std_error").Optional().Default(""),
 		field.Bool("failed").Default(false),
 		field.String("end").Optional().Default(""),
+		field.String("started_at").Optional().Default(""),
+		field.String("status").Optional().Default("pending"),
+		field.Bool("timeout").Optional().Default(false),
 	}
 }
 

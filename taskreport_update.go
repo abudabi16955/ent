@@ -104,6 +104,66 @@ func (tru *TaskReportUpdate) ClearEnd() *TaskReportUpdate {
 	return tru
 }
 
+// SetStartedAt sets the "started_at" field.
+func (tru *TaskReportUpdate) SetStartedAt(s string) *TaskReportUpdate {
+	tru.mutation.SetStartedAt(s)
+	return tru
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (tru *TaskReportUpdate) SetNillableStartedAt(s *string) *TaskReportUpdate {
+	if s != nil {
+		tru.SetStartedAt(*s)
+	}
+	return tru
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (tru *TaskReportUpdate) ClearStartedAt() *TaskReportUpdate {
+	tru.mutation.ClearStartedAt()
+	return tru
+}
+
+// SetStatus sets the "status" field.
+func (tru *TaskReportUpdate) SetStatus(s string) *TaskReportUpdate {
+	tru.mutation.SetStatus(s)
+	return tru
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (tru *TaskReportUpdate) SetNillableStatus(s *string) *TaskReportUpdate {
+	if s != nil {
+		tru.SetStatus(*s)
+	}
+	return tru
+}
+
+// ClearStatus clears the value of the "status" field.
+func (tru *TaskReportUpdate) ClearStatus() *TaskReportUpdate {
+	tru.mutation.ClearStatus()
+	return tru
+}
+
+// SetTimeout sets the "timeout" field.
+func (tru *TaskReportUpdate) SetTimeout(b bool) *TaskReportUpdate {
+	tru.mutation.SetTimeout(b)
+	return tru
+}
+
+// SetNillableTimeout sets the "timeout" field if the given value is not nil.
+func (tru *TaskReportUpdate) SetNillableTimeout(b *bool) *TaskReportUpdate {
+	if b != nil {
+		tru.SetTimeout(*b)
+	}
+	return tru
+}
+
+// ClearTimeout clears the value of the "timeout" field.
+func (tru *TaskReportUpdate) ClearTimeout() *TaskReportUpdate {
+	tru.mutation.ClearTimeout()
+	return tru
+}
+
 // SetProfileissueID sets the "profileissue" edge to the ProfileIssue entity by ID.
 func (tru *TaskReportUpdate) SetProfileissueID(id int) *TaskReportUpdate {
 	tru.mutation.SetProfileissueID(id)
@@ -221,6 +281,24 @@ func (tru *TaskReportUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tru.mutation.EndCleared() {
 		_spec.ClearField(taskreport.FieldEnd, field.TypeString)
+	}
+	if value, ok := tru.mutation.StartedAt(); ok {
+		_spec.SetField(taskreport.FieldStartedAt, field.TypeString, value)
+	}
+	if tru.mutation.StartedAtCleared() {
+		_spec.ClearField(taskreport.FieldStartedAt, field.TypeString)
+	}
+	if value, ok := tru.mutation.Status(); ok {
+		_spec.SetField(taskreport.FieldStatus, field.TypeString, value)
+	}
+	if tru.mutation.StatusCleared() {
+		_spec.ClearField(taskreport.FieldStatus, field.TypeString)
+	}
+	if value, ok := tru.mutation.Timeout(); ok {
+		_spec.SetField(taskreport.FieldTimeout, field.TypeBool, value)
+	}
+	if tru.mutation.TimeoutCleared() {
+		_spec.ClearField(taskreport.FieldTimeout, field.TypeBool)
 	}
 	if tru.mutation.ProfileissueCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -376,6 +454,66 @@ func (truo *TaskReportUpdateOne) ClearEnd() *TaskReportUpdateOne {
 	return truo
 }
 
+// SetStartedAt sets the "started_at" field.
+func (truo *TaskReportUpdateOne) SetStartedAt(s string) *TaskReportUpdateOne {
+	truo.mutation.SetStartedAt(s)
+	return truo
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (truo *TaskReportUpdateOne) SetNillableStartedAt(s *string) *TaskReportUpdateOne {
+	if s != nil {
+		truo.SetStartedAt(*s)
+	}
+	return truo
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (truo *TaskReportUpdateOne) ClearStartedAt() *TaskReportUpdateOne {
+	truo.mutation.ClearStartedAt()
+	return truo
+}
+
+// SetStatus sets the "status" field.
+func (truo *TaskReportUpdateOne) SetStatus(s string) *TaskReportUpdateOne {
+	truo.mutation.SetStatus(s)
+	return truo
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (truo *TaskReportUpdateOne) SetNillableStatus(s *string) *TaskReportUpdateOne {
+	if s != nil {
+		truo.SetStatus(*s)
+	}
+	return truo
+}
+
+// ClearStatus clears the value of the "status" field.
+func (truo *TaskReportUpdateOne) ClearStatus() *TaskReportUpdateOne {
+	truo.mutation.ClearStatus()
+	return truo
+}
+
+// SetTimeout sets the "timeout" field.
+func (truo *TaskReportUpdateOne) SetTimeout(b bool) *TaskReportUpdateOne {
+	truo.mutation.SetTimeout(b)
+	return truo
+}
+
+// SetNillableTimeout sets the "timeout" field if the given value is not nil.
+func (truo *TaskReportUpdateOne) SetNillableTimeout(b *bool) *TaskReportUpdateOne {
+	if b != nil {
+		truo.SetTimeout(*b)
+	}
+	return truo
+}
+
+// ClearTimeout clears the value of the "timeout" field.
+func (truo *TaskReportUpdateOne) ClearTimeout() *TaskReportUpdateOne {
+	truo.mutation.ClearTimeout()
+	return truo
+}
+
 // SetProfileissueID sets the "profileissue" edge to the ProfileIssue entity by ID.
 func (truo *TaskReportUpdateOne) SetProfileissueID(id int) *TaskReportUpdateOne {
 	truo.mutation.SetProfileissueID(id)
@@ -523,6 +661,24 @@ func (truo *TaskReportUpdateOne) sqlSave(ctx context.Context) (_node *TaskReport
 	}
 	if truo.mutation.EndCleared() {
 		_spec.ClearField(taskreport.FieldEnd, field.TypeString)
+	}
+	if value, ok := truo.mutation.StartedAt(); ok {
+		_spec.SetField(taskreport.FieldStartedAt, field.TypeString, value)
+	}
+	if truo.mutation.StartedAtCleared() {
+		_spec.ClearField(taskreport.FieldStartedAt, field.TypeString)
+	}
+	if value, ok := truo.mutation.Status(); ok {
+		_spec.SetField(taskreport.FieldStatus, field.TypeString, value)
+	}
+	if truo.mutation.StatusCleared() {
+		_spec.ClearField(taskreport.FieldStatus, field.TypeString)
+	}
+	if value, ok := truo.mutation.Timeout(); ok {
+		_spec.SetField(taskreport.FieldTimeout, field.TypeBool, value)
+	}
+	if truo.mutation.TimeoutCleared() {
+		_spec.ClearField(taskreport.FieldTimeout, field.TypeBool)
 	}
 	if truo.mutation.ProfileissueCleared() {
 		edge := &sqlgraph.EdgeSpec{

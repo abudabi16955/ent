@@ -20,6 +20,12 @@ const (
 	FieldFailed = "failed"
 	// FieldEnd holds the string denoting the end field in the database.
 	FieldEnd = "end"
+	// FieldStartedAt holds the string denoting the started_at field in the database.
+	FieldStartedAt = "started_at"
+	// FieldStatus holds the string denoting the status field in the database.
+	FieldStatus = "status"
+	// FieldTimeout holds the string denoting the timeout field in the database.
+	FieldTimeout = "timeout"
 	// EdgeProfileissue holds the string denoting the profileissue edge name in mutations.
 	EdgeProfileissue = "profileissue"
 	// EdgeTask holds the string denoting the task edge name in mutations.
@@ -49,6 +55,9 @@ var Columns = []string{
 	FieldStdError,
 	FieldFailed,
 	FieldEnd,
+	FieldStartedAt,
+	FieldStatus,
+	FieldTimeout,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "task_reports"
@@ -82,6 +91,12 @@ var (
 	DefaultFailed bool
 	// DefaultEnd holds the default value on creation for the "end" field.
 	DefaultEnd string
+	// DefaultStartedAt holds the default value on creation for the "started_at" field.
+	DefaultStartedAt string
+	// DefaultStatus holds the default value on creation for the "status" field.
+	DefaultStatus string
+	// DefaultTimeout holds the default value on creation for the "timeout" field.
+	DefaultTimeout bool
 )
 
 // OrderOption defines the ordering options for the TaskReport queries.
@@ -110,6 +125,21 @@ func ByFailed(opts ...sql.OrderTermOption) OrderOption {
 // ByEnd orders the results by the end field.
 func ByEnd(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEnd, opts...).ToFunc()
+}
+
+// ByStartedAt orders the results by the started_at field.
+func ByStartedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStartedAt, opts...).ToFunc()
+}
+
+// ByStatus orders the results by the status field.
+func ByStatus(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByTimeout orders the results by the timeout field.
+func ByTimeout(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTimeout, opts...).ToFunc()
 }
 
 // ByProfileissueField orders the results by profileissue field.

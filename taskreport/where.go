@@ -73,6 +73,21 @@ func End(v string) predicate.TaskReport {
 	return predicate.TaskReport(sql.FieldEQ(FieldEnd, v))
 }
 
+// StartedAt applies equality check predicate on the "started_at" field. It's identical to StartedAtEQ.
+func StartedAt(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldEQ(FieldStartedAt, v))
+}
+
+// Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
+func Status(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldEQ(FieldStatus, v))
+}
+
+// Timeout applies equality check predicate on the "timeout" field. It's identical to TimeoutEQ.
+func Timeout(v bool) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldEQ(FieldTimeout, v))
+}
+
 // StdOutputEQ applies the EQ predicate on the "std_output" field.
 func StdOutputEQ(v string) predicate.TaskReport {
 	return predicate.TaskReport(sql.FieldEQ(FieldStdOutput, v))
@@ -306,6 +321,176 @@ func EndEqualFold(v string) predicate.TaskReport {
 // EndContainsFold applies the ContainsFold predicate on the "end" field.
 func EndContainsFold(v string) predicate.TaskReport {
 	return predicate.TaskReport(sql.FieldContainsFold(FieldEnd, v))
+}
+
+// StartedAtEQ applies the EQ predicate on the "started_at" field.
+func StartedAtEQ(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldEQ(FieldStartedAt, v))
+}
+
+// StartedAtNEQ applies the NEQ predicate on the "started_at" field.
+func StartedAtNEQ(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldNEQ(FieldStartedAt, v))
+}
+
+// StartedAtIn applies the In predicate on the "started_at" field.
+func StartedAtIn(vs ...string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldIn(FieldStartedAt, vs...))
+}
+
+// StartedAtNotIn applies the NotIn predicate on the "started_at" field.
+func StartedAtNotIn(vs ...string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldNotIn(FieldStartedAt, vs...))
+}
+
+// StartedAtGT applies the GT predicate on the "started_at" field.
+func StartedAtGT(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldGT(FieldStartedAt, v))
+}
+
+// StartedAtGTE applies the GTE predicate on the "started_at" field.
+func StartedAtGTE(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldGTE(FieldStartedAt, v))
+}
+
+// StartedAtLT applies the LT predicate on the "started_at" field.
+func StartedAtLT(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldLT(FieldStartedAt, v))
+}
+
+// StartedAtLTE applies the LTE predicate on the "started_at" field.
+func StartedAtLTE(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldLTE(FieldStartedAt, v))
+}
+
+// StartedAtContains applies the Contains predicate on the "started_at" field.
+func StartedAtContains(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldContains(FieldStartedAt, v))
+}
+
+// StartedAtHasPrefix applies the HasPrefix predicate on the "started_at" field.
+func StartedAtHasPrefix(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldHasPrefix(FieldStartedAt, v))
+}
+
+// StartedAtHasSuffix applies the HasSuffix predicate on the "started_at" field.
+func StartedAtHasSuffix(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldHasSuffix(FieldStartedAt, v))
+}
+
+// StartedAtIsNil applies the IsNil predicate on the "started_at" field.
+func StartedAtIsNil() predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldIsNull(FieldStartedAt))
+}
+
+// StartedAtNotNil applies the NotNil predicate on the "started_at" field.
+func StartedAtNotNil() predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldNotNull(FieldStartedAt))
+}
+
+// StartedAtEqualFold applies the EqualFold predicate on the "started_at" field.
+func StartedAtEqualFold(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldEqualFold(FieldStartedAt, v))
+}
+
+// StartedAtContainsFold applies the ContainsFold predicate on the "started_at" field.
+func StartedAtContainsFold(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldContainsFold(FieldStartedAt, v))
+}
+
+// StatusEQ applies the EQ predicate on the "status" field.
+func StatusEQ(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldEQ(FieldStatus, v))
+}
+
+// StatusNEQ applies the NEQ predicate on the "status" field.
+func StatusNEQ(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldNEQ(FieldStatus, v))
+}
+
+// StatusIn applies the In predicate on the "status" field.
+func StatusIn(vs ...string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldIn(FieldStatus, vs...))
+}
+
+// StatusNotIn applies the NotIn predicate on the "status" field.
+func StatusNotIn(vs ...string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldNotIn(FieldStatus, vs...))
+}
+
+// StatusGT applies the GT predicate on the "status" field.
+func StatusGT(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldGT(FieldStatus, v))
+}
+
+// StatusGTE applies the GTE predicate on the "status" field.
+func StatusGTE(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldGTE(FieldStatus, v))
+}
+
+// StatusLT applies the LT predicate on the "status" field.
+func StatusLT(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldLT(FieldStatus, v))
+}
+
+// StatusLTE applies the LTE predicate on the "status" field.
+func StatusLTE(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldLTE(FieldStatus, v))
+}
+
+// StatusContains applies the Contains predicate on the "status" field.
+func StatusContains(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldContains(FieldStatus, v))
+}
+
+// StatusHasPrefix applies the HasPrefix predicate on the "status" field.
+func StatusHasPrefix(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldHasPrefix(FieldStatus, v))
+}
+
+// StatusHasSuffix applies the HasSuffix predicate on the "status" field.
+func StatusHasSuffix(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldHasSuffix(FieldStatus, v))
+}
+
+// StatusIsNil applies the IsNil predicate on the "status" field.
+func StatusIsNil() predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldIsNull(FieldStatus))
+}
+
+// StatusNotNil applies the NotNil predicate on the "status" field.
+func StatusNotNil() predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldNotNull(FieldStatus))
+}
+
+// StatusEqualFold applies the EqualFold predicate on the "status" field.
+func StatusEqualFold(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldEqualFold(FieldStatus, v))
+}
+
+// StatusContainsFold applies the ContainsFold predicate on the "status" field.
+func StatusContainsFold(v string) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldContainsFold(FieldStatus, v))
+}
+
+// TimeoutEQ applies the EQ predicate on the "timeout" field.
+func TimeoutEQ(v bool) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldEQ(FieldTimeout, v))
+}
+
+// TimeoutNEQ applies the NEQ predicate on the "timeout" field.
+func TimeoutNEQ(v bool) predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldNEQ(FieldTimeout, v))
+}
+
+// TimeoutIsNil applies the IsNil predicate on the "timeout" field.
+func TimeoutIsNil() predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldIsNull(FieldTimeout))
+}
+
+// TimeoutNotNil applies the NotNil predicate on the "timeout" field.
+func TimeoutNotNil() predicate.TaskReport {
+	return predicate.TaskReport(sql.FieldNotNull(FieldTimeout))
 }
 
 // HasProfileissue applies the HasEdge predicate on the "profileissue" edge.

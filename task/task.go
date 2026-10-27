@@ -202,6 +202,8 @@ const (
 	FieldPackageArch = "package_arch"
 	// FieldPackageBrewType holds the string denoting the package_brew_type field in the database.
 	FieldPackageBrewType = "package_brew_type"
+	// FieldTimeout holds the string denoting the timeout field in the database.
+	FieldTimeout = "timeout"
 	// EdgeTags holds the string denoting the tags edge name in mutations.
 	EdgeTags = "tags"
 	// EdgeProfile holds the string denoting the profile edge name in mutations.
@@ -330,6 +332,7 @@ var Columns = []string{
 	FieldPackageBranch,
 	FieldPackageArch,
 	FieldPackageBrewType,
+	FieldTimeout,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "tasks"
@@ -474,6 +477,8 @@ var (
 	DefaultPackageArch string
 	// DefaultPackageBrewType holds the default value on creation for the "package_brew_type" field.
 	DefaultPackageBrewType string
+	// DefaultTimeout holds the default value on creation for the "timeout" field.
+	DefaultTimeout int
 )
 
 // Type defines the type for the "type" enum field.
@@ -1148,6 +1153,11 @@ func ByPackageArch(opts ...sql.OrderTermOption) OrderOption {
 // ByPackageBrewType orders the results by the package_brew_type field.
 func ByPackageBrewType(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPackageBrewType, opts...).ToFunc()
+}
+
+// ByTimeout orders the results by the timeout field.
+func ByTimeout(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTimeout, opts...).ToFunc()
 }
 
 // ByTagsCount orders the results by tags count.
