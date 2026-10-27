@@ -38668,7 +38668,7 @@ type TaskReportMutation struct {
 	failed              *bool
 	end                 *string
 	started_at          *string
-	status              *string
+	status              *taskreport.Status
 	timeout             *bool
 	clearedFields       map[string]struct{}
 	profileissue        *int
@@ -39011,12 +39011,12 @@ func (m *TaskReportMutation) ResetStartedAt() {
 }
 
 // SetStatus sets the "status" field.
-func (m *TaskReportMutation) SetStatus(s string) {
-	m.status = &s
+func (m *TaskReportMutation) SetStatus(t taskreport.Status) {
+	m.status = &t
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *TaskReportMutation) Status() (r string, exists bool) {
+func (m *TaskReportMutation) Status() (r taskreport.Status, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -39027,7 +39027,7 @@ func (m *TaskReportMutation) Status() (r string, exists bool) {
 // OldStatus returns the old "status" field's value of the TaskReport entity.
 // If the TaskReport object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *TaskReportMutation) OldStatus(ctx context.Context) (v string, err error) {
+func (m *TaskReportMutation) OldStatus(ctx context.Context) (v taskreport.Status, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -39332,7 +39332,7 @@ func (m *TaskReportMutation) SetField(name string, value ent.Value) error {
 		m.SetStartedAt(v)
 		return nil
 	case taskreport.FieldStatus:
-		v, ok := value.(string)
+		v, ok := value.(taskreport.Status)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

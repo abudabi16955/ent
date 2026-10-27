@@ -772,10 +772,6 @@ func init() {
 	taskreportDescStartedAt := taskreportFields[4].Descriptor()
 	// taskreport.DefaultStartedAt holds the default value on creation for the started_at field.
 	taskreport.DefaultStartedAt = taskreportDescStartedAt.Default.(string)
-	// taskreportDescStatus is the schema descriptor for status field.
-	taskreportDescStatus := taskreportFields[5].Descriptor()
-	// taskreport.DefaultStatus holds the default value on creation for the status field.
-	taskreport.DefaultStatus = taskreportDescStatus.Default.(string)
 	// taskreportDescTimeout is the schema descriptor for timeout field.
 	taskreportDescTimeout := taskreportFields[6].Descriptor()
 	// taskreport.DefaultTimeout holds the default value on creation for the timeout field.

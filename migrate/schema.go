@@ -975,7 +975,7 @@ var (
 		{Name: "failed", Type: field.TypeBool, Default: false},
 		{Name: "end", Type: field.TypeString, Nullable: true, Default: ""},
 		{Name: "started_at", Type: field.TypeString, Nullable: true, Default: ""},
-		{Name: "status", Type: field.TypeString, Nullable: true, Default: "pending"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Enums: []string{"pending", "running", "completed", "failed"}, Default: "pending"},
 		{Name: "timeout", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "profile_issue_tasksreports", Type: field.TypeInt, Nullable: true},
 		{Name: "task_reports", Type: field.TypeInt, Nullable: true},

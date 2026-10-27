@@ -125,15 +125,15 @@ func (tru *TaskReportUpdate) ClearStartedAt() *TaskReportUpdate {
 }
 
 // SetStatus sets the "status" field.
-func (tru *TaskReportUpdate) SetStatus(s string) *TaskReportUpdate {
-	tru.mutation.SetStatus(s)
+func (tru *TaskReportUpdate) SetStatus(t taskreport.Status) *TaskReportUpdate {
+	tru.mutation.SetStatus(t)
 	return tru
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (tru *TaskReportUpdate) SetNillableStatus(s *string) *TaskReportUpdate {
-	if s != nil {
-		tru.SetStatus(*s)
+func (tru *TaskReportUpdate) SetNillableStatus(t *taskreport.Status) *TaskReportUpdate {
+	if t != nil {
+		tru.SetStatus(*t)
 	}
 	return tru
 }
@@ -246,6 +246,16 @@ func (tru *TaskReportUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (tru *TaskReportUpdate) check() error {
+	if v, ok := tru.mutation.Status(); ok {
+		if err := taskreport.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "TaskReport.status": %w`, err)}
+		}
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (tru *TaskReportUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TaskReportUpdate {
 	tru.modifiers = append(tru.modifiers, modifiers...)
@@ -253,6 +263,9 @@ func (tru *TaskReportUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Ta
 }
 
 func (tru *TaskReportUpdate) sqlSave(ctx context.Context) (n int, err error) {
+	if err := tru.check(); err != nil {
+		return n, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(taskreport.Table, taskreport.Columns, sqlgraph.NewFieldSpec(taskreport.FieldID, field.TypeInt))
 	if ps := tru.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -289,10 +302,10 @@ func (tru *TaskReportUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.ClearField(taskreport.FieldStartedAt, field.TypeString)
 	}
 	if value, ok := tru.mutation.Status(); ok {
-		_spec.SetField(taskreport.FieldStatus, field.TypeString, value)
+		_spec.SetField(taskreport.FieldStatus, field.TypeEnum, value)
 	}
 	if tru.mutation.StatusCleared() {
-		_spec.ClearField(taskreport.FieldStatus, field.TypeString)
+		_spec.ClearField(taskreport.FieldStatus, field.TypeEnum)
 	}
 	if value, ok := tru.mutation.Timeout(); ok {
 		_spec.SetField(taskreport.FieldTimeout, field.TypeBool, value)
@@ -475,15 +488,15 @@ func (truo *TaskReportUpdateOne) ClearStartedAt() *TaskReportUpdateOne {
 }
 
 // SetStatus sets the "status" field.
-func (truo *TaskReportUpdateOne) SetStatus(s string) *TaskReportUpdateOne {
-	truo.mutation.SetStatus(s)
+func (truo *TaskReportUpdateOne) SetStatus(t taskreport.Status) *TaskReportUpdateOne {
+	truo.mutation.SetStatus(t)
 	return truo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (truo *TaskReportUpdateOne) SetNillableStatus(s *string) *TaskReportUpdateOne {
-	if s != nil {
-		truo.SetStatus(*s)
+func (truo *TaskReportUpdateOne) SetNillableStatus(t *taskreport.Status) *TaskReportUpdateOne {
+	if t != nil {
+		truo.SetStatus(*t)
 	}
 	return truo
 }
@@ -609,6 +622,16 @@ func (truo *TaskReportUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
+// check runs all checks and user-defined validators on the builder.
+func (truo *TaskReportUpdateOne) check() error {
+	if v, ok := truo.mutation.Status(); ok {
+		if err := taskreport.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "TaskReport.status": %w`, err)}
+		}
+	}
+	return nil
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (truo *TaskReportUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *TaskReportUpdateOne {
 	truo.modifiers = append(truo.modifiers, modifiers...)
@@ -616,6 +639,9 @@ func (truo *TaskReportUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder))
 }
 
 func (truo *TaskReportUpdateOne) sqlSave(ctx context.Context) (_node *TaskReport, err error) {
+	if err := truo.check(); err != nil {
+		return _node, err
+	}
 	_spec := sqlgraph.NewUpdateSpec(taskreport.Table, taskreport.Columns, sqlgraph.NewFieldSpec(taskreport.FieldID, field.TypeInt))
 	id, ok := truo.mutation.ID()
 	if !ok {
@@ -669,10 +695,10 @@ func (truo *TaskReportUpdateOne) sqlSave(ctx context.Context) (_node *TaskReport
 		_spec.ClearField(taskreport.FieldStartedAt, field.TypeString)
 	}
 	if value, ok := truo.mutation.Status(); ok {
-		_spec.SetField(taskreport.FieldStatus, field.TypeString, value)
+		_spec.SetField(taskreport.FieldStatus, field.TypeEnum, value)
 	}
 	if truo.mutation.StatusCleared() {
-		_spec.ClearField(taskreport.FieldStatus, field.TypeString)
+		_spec.ClearField(taskreport.FieldStatus, field.TypeEnum)
 	}
 	if value, ok := truo.mutation.Timeout(); ok {
 		_spec.SetField(taskreport.FieldTimeout, field.TypeBool, value)

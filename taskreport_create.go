@@ -94,15 +94,15 @@ func (trc *TaskReportCreate) SetNillableStartedAt(s *string) *TaskReportCreate {
 }
 
 // SetStatus sets the "status" field.
-func (trc *TaskReportCreate) SetStatus(s string) *TaskReportCreate {
-	trc.mutation.SetStatus(s)
+func (trc *TaskReportCreate) SetStatus(t taskreport.Status) *TaskReportCreate {
+	trc.mutation.SetStatus(t)
 	return trc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (trc *TaskReportCreate) SetNillableStatus(s *string) *TaskReportCreate {
-	if s != nil {
-		trc.SetStatus(*s)
+func (trc *TaskReportCreate) SetNillableStatus(t *taskreport.Status) *TaskReportCreate {
+	if t != nil {
+		trc.SetStatus(*t)
 	}
 	return trc
 }
@@ -229,6 +229,11 @@ func (trc *TaskReportCreate) check() error {
 	if _, ok := trc.mutation.Failed(); !ok {
 		return &ValidationError{Name: "failed", err: errors.New(`ent: missing required field "TaskReport.failed"`)}
 	}
+	if v, ok := trc.mutation.Status(); ok {
+		if err := taskreport.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "TaskReport.status": %w`, err)}
+		}
+	}
 	return nil
 }
 
@@ -277,7 +282,7 @@ func (trc *TaskReportCreate) createSpec() (*TaskReport, *sqlgraph.CreateSpec) {
 		_node.StartedAt = value
 	}
 	if value, ok := trc.mutation.Status(); ok {
-		_spec.SetField(taskreport.FieldStatus, field.TypeString, value)
+		_spec.SetField(taskreport.FieldStatus, field.TypeEnum, value)
 		_node.Status = value
 	}
 	if value, ok := trc.mutation.Timeout(); ok {
@@ -455,7 +460,7 @@ func (u *TaskReportUpsert) ClearStartedAt() *TaskReportUpsert {
 }
 
 // SetStatus sets the "status" field.
-func (u *TaskReportUpsert) SetStatus(v string) *TaskReportUpsert {
+func (u *TaskReportUpsert) SetStatus(v taskreport.Status) *TaskReportUpsert {
 	u.Set(taskreport.FieldStatus, v)
 	return u
 }
@@ -629,7 +634,7 @@ func (u *TaskReportUpsertOne) ClearStartedAt() *TaskReportUpsertOne {
 }
 
 // SetStatus sets the "status" field.
-func (u *TaskReportUpsertOne) SetStatus(v string) *TaskReportUpsertOne {
+func (u *TaskReportUpsertOne) SetStatus(v taskreport.Status) *TaskReportUpsertOne {
 	return u.Update(func(s *TaskReportUpsert) {
 		s.SetStatus(v)
 	})
@@ -973,7 +978,7 @@ func (u *TaskReportUpsertBulk) ClearStartedAt() *TaskReportUpsertBulk {
 }
 
 // SetStatus sets the "status" field.
-func (u *TaskReportUpsertBulk) SetStatus(v string) *TaskReportUpsertBulk {
+func (u *TaskReportUpsertBulk) SetStatus(v taskreport.Status) *TaskReportUpsertBulk {
 	return u.Update(func(s *TaskReportUpsert) {
 		s.SetStatus(v)
 	})

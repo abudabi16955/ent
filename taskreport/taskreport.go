@@ -3,6 +3,8 @@
 package taskreport
 
 import (
+	"fmt"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 )
@@ -93,11 +95,37 @@ var (
 	DefaultEnd string
 	// DefaultStartedAt holds the default value on creation for the "started_at" field.
 	DefaultStartedAt string
-	// DefaultStatus holds the default value on creation for the "status" field.
-	DefaultStatus string
 	// DefaultTimeout holds the default value on creation for the "timeout" field.
 	DefaultTimeout bool
 )
+
+// Status defines the type for the "status" enum field.
+type Status string
+
+// StatusPending is the default value of the Status enum.
+const DefaultStatus = StatusPending
+
+// Status values.
+const (
+	StatusPending   Status = "pending"
+	StatusRunning   Status = "running"
+	StatusCompleted Status = "completed"
+	StatusFailed    Status = "failed"
+)
+
+func (s Status) String() string {
+	return string(s)
+}
+
+// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
+func StatusValidator(s Status) error {
+	switch s {
+	case StatusPending, StatusRunning, StatusCompleted, StatusFailed:
+		return nil
+	default:
+		return fmt.Errorf("taskreport: invalid enum value for status field: %q", s)
+	}
+}
 
 // OrderOption defines the ordering options for the TaskReport queries.
 type OrderOption func(*sql.Selector)

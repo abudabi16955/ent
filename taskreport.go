@@ -29,7 +29,7 @@ type TaskReport struct {
 	// StartedAt holds the value of the "started_at" field.
 	StartedAt string `json:"started_at,omitempty"`
 	// Status holds the value of the "status" field.
-	Status string `json:"status,omitempty"`
+	Status taskreport.Status `json:"status,omitempty"`
 	// Timeout holds the value of the "timeout" field.
 	Timeout bool `json:"timeout,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -143,7 +143,7 @@ func (tr *TaskReport) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				tr.Status = value.String
+				tr.Status = taskreport.Status(value.String)
 			}
 		case taskreport.FieldTimeout:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -227,7 +227,7 @@ func (tr *TaskReport) String() string {
 	builder.WriteString(tr.StartedAt)
 	builder.WriteString(", ")
 	builder.WriteString("status=")
-	builder.WriteString(tr.Status)
+	builder.WriteString(fmt.Sprintf("%v", tr.Status))
 	builder.WriteString(", ")
 	builder.WriteString("timeout=")
 	builder.WriteString(fmt.Sprintf("%v", tr.Timeout))
