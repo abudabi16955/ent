@@ -31233,6 +31233,8 @@ type TaskMutation struct {
 	package_branch                             *string
 	package_arch                               *string
 	package_brew_type                          *string
+	timeout                                    *int
+	addtimeout                                 *int
 	clearedFields                              map[string]struct{}
 	tags                                       map[int]struct{}
 	removedtags                                map[int]struct{}
@@ -35975,6 +35977,76 @@ func (m *TaskMutation) ResetPackageBrewType() {
 	delete(m.clearedFields, task.FieldPackageBrewType)
 }
 
+// SetTimeout sets the "timeout" field.
+func (m *TaskMutation) SetTimeout(i int) {
+	m.timeout = &i
+	m.addtimeout = nil
+}
+
+// Timeout returns the value of the "timeout" field in the mutation.
+func (m *TaskMutation) Timeout() (r int, exists bool) {
+	v := m.timeout
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimeout returns the old "timeout" field's value of the Task entity.
+// If the Task object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskMutation) OldTimeout(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTimeout is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTimeout requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimeout: %w", err)
+	}
+	return oldValue.Timeout, nil
+}
+
+// AddTimeout adds i to the "timeout" field.
+func (m *TaskMutation) AddTimeout(i int) {
+	if m.addtimeout != nil {
+		*m.addtimeout += i
+	} else {
+		m.addtimeout = &i
+	}
+}
+
+// AddedTimeout returns the value that was added to the "timeout" field in this mutation.
+func (m *TaskMutation) AddedTimeout() (r int, exists bool) {
+	v := m.addtimeout
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTimeout clears the value of the "timeout" field.
+func (m *TaskMutation) ClearTimeout() {
+	m.timeout = nil
+	m.addtimeout = nil
+	m.clearedFields[task.FieldTimeout] = struct{}{}
+}
+
+// TimeoutCleared returns if the "timeout" field was cleared in this mutation.
+func (m *TaskMutation) TimeoutCleared() bool {
+	_, ok := m.clearedFields[task.FieldTimeout]
+	return ok
+}
+
+// ResetTimeout resets all changes to the "timeout" field.
+func (m *TaskMutation) ResetTimeout() {
+	m.timeout = nil
+	m.addtimeout = nil
+	delete(m.clearedFields, task.FieldTimeout)
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by ids.
 func (m *TaskMutation) AddTagIDs(ids ...int) {
 	if m.tags == nil {
@@ -36156,7 +36228,7 @@ func (m *TaskMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskMutation) Fields() []string {
-	fields := make([]string, 0, 94)
+	fields := make([]string, 0, 95)
 	if m.name != nil {
 		fields = append(fields, task.FieldName)
 	}
@@ -36439,6 +36511,9 @@ func (m *TaskMutation) Fields() []string {
 	if m.package_brew_type != nil {
 		fields = append(fields, task.FieldPackageBrewType)
 	}
+	if m.timeout != nil {
+		fields = append(fields, task.FieldTimeout)
+	}
 	return fields
 }
 
@@ -36635,6 +36710,8 @@ func (m *TaskMutation) Field(name string) (ent.Value, bool) {
 		return m.PackageArch()
 	case task.FieldPackageBrewType:
 		return m.PackageBrewType()
+	case task.FieldTimeout:
+		return m.Timeout()
 	}
 	return nil, false
 }
@@ -36832,6 +36909,8 @@ func (m *TaskMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldPackageArch(ctx)
 	case task.FieldPackageBrewType:
 		return m.OldPackageBrewType(ctx)
+	case task.FieldTimeout:
+		return m.OldTimeout(ctx)
 	}
 	return nil, fmt.Errorf("unknown Task field %s", name)
 }
@@ -37499,6 +37578,13 @@ func (m *TaskMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetPackageBrewType(v)
 		return nil
+	case task.FieldTimeout:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimeout(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Task field %s", name)
 }
@@ -37516,6 +37602,9 @@ func (m *TaskMutation) AddedFields() []string {
 	if m.add_order != nil {
 		fields = append(fields, task.FieldOrder)
 	}
+	if m.addtimeout != nil {
+		fields = append(fields, task.FieldTimeout)
+	}
 	return fields
 }
 
@@ -37530,6 +37619,8 @@ func (m *TaskMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedTenant()
 	case task.FieldOrder:
 		return m.AddedOrder()
+	case task.FieldTimeout:
+		return m.AddedTimeout()
 	}
 	return nil, false
 }
@@ -37559,6 +37650,13 @@ func (m *TaskMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddOrder(v)
+		return nil
+	case task.FieldTimeout:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTimeout(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Task numeric field %s", name)
@@ -37840,6 +37938,9 @@ func (m *TaskMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(task.FieldPackageBrewType) {
 		fields = append(fields, task.FieldPackageBrewType)
+	}
+	if m.FieldCleared(task.FieldTimeout) {
+		fields = append(fields, task.FieldTimeout)
 	}
 	return fields
 }
@@ -38127,6 +38228,9 @@ func (m *TaskMutation) ClearField(name string) error {
 		return nil
 	case task.FieldPackageBrewType:
 		m.ClearPackageBrewType()
+		return nil
+	case task.FieldTimeout:
+		m.ClearTimeout()
 		return nil
 	}
 	return fmt.Errorf("unknown Task nullable field %s", name)
@@ -38418,6 +38522,9 @@ func (m *TaskMutation) ResetField(name string) error {
 	case task.FieldPackageBrewType:
 		m.ResetPackageBrewType()
 		return nil
+	case task.FieldTimeout:
+		m.ResetTimeout()
+		return nil
 	}
 	return fmt.Errorf("unknown Task field %s", name)
 }
@@ -38560,6 +38667,9 @@ type TaskReportMutation struct {
 	std_error           *string
 	failed              *bool
 	end                 *string
+	started_at          *string
+	status              *taskreport.Status
+	timeout             *bool
 	clearedFields       map[string]struct{}
 	profileissue        *int
 	clearedprofileissue bool
@@ -38851,6 +38961,153 @@ func (m *TaskReportMutation) ResetEnd() {
 	delete(m.clearedFields, taskreport.FieldEnd)
 }
 
+// SetStartedAt sets the "started_at" field.
+func (m *TaskReportMutation) SetStartedAt(s string) {
+	m.started_at = &s
+}
+
+// StartedAt returns the value of the "started_at" field in the mutation.
+func (m *TaskReportMutation) StartedAt() (r string, exists bool) {
+	v := m.started_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStartedAt returns the old "started_at" field's value of the TaskReport entity.
+// If the TaskReport object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskReportMutation) OldStartedAt(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStartedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStartedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStartedAt: %w", err)
+	}
+	return oldValue.StartedAt, nil
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (m *TaskReportMutation) ClearStartedAt() {
+	m.started_at = nil
+	m.clearedFields[taskreport.FieldStartedAt] = struct{}{}
+}
+
+// StartedAtCleared returns if the "started_at" field was cleared in this mutation.
+func (m *TaskReportMutation) StartedAtCleared() bool {
+	_, ok := m.clearedFields[taskreport.FieldStartedAt]
+	return ok
+}
+
+// ResetStartedAt resets all changes to the "started_at" field.
+func (m *TaskReportMutation) ResetStartedAt() {
+	m.started_at = nil
+	delete(m.clearedFields, taskreport.FieldStartedAt)
+}
+
+// SetStatus sets the "status" field.
+func (m *TaskReportMutation) SetStatus(t taskreport.Status) {
+	m.status = &t
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *TaskReportMutation) Status() (r taskreport.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the TaskReport entity.
+// If the TaskReport object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskReportMutation) OldStatus(ctx context.Context) (v taskreport.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *TaskReportMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[taskreport.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *TaskReportMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[taskreport.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *TaskReportMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, taskreport.FieldStatus)
+}
+
+// SetTimeout sets the "timeout" field.
+func (m *TaskReportMutation) SetTimeout(b bool) {
+	m.timeout = &b
+}
+
+// Timeout returns the value of the "timeout" field in the mutation.
+func (m *TaskReportMutation) Timeout() (r bool, exists bool) {
+	v := m.timeout
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimeout returns the old "timeout" field's value of the TaskReport entity.
+// If the TaskReport object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaskReportMutation) OldTimeout(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTimeout is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTimeout requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimeout: %w", err)
+	}
+	return oldValue.Timeout, nil
+}
+
+// ClearTimeout clears the value of the "timeout" field.
+func (m *TaskReportMutation) ClearTimeout() {
+	m.timeout = nil
+	m.clearedFields[taskreport.FieldTimeout] = struct{}{}
+}
+
+// TimeoutCleared returns if the "timeout" field was cleared in this mutation.
+func (m *TaskReportMutation) TimeoutCleared() bool {
+	_, ok := m.clearedFields[taskreport.FieldTimeout]
+	return ok
+}
+
+// ResetTimeout resets all changes to the "timeout" field.
+func (m *TaskReportMutation) ResetTimeout() {
+	m.timeout = nil
+	delete(m.clearedFields, taskreport.FieldTimeout)
+}
+
 // SetProfileissueID sets the "profileissue" edge to the ProfileIssue entity by id.
 func (m *TaskReportMutation) SetProfileissueID(id int) {
 	m.profileissue = &id
@@ -38963,7 +39220,7 @@ func (m *TaskReportMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TaskReportMutation) Fields() []string {
-	fields := make([]string, 0, 4)
+	fields := make([]string, 0, 7)
 	if m.std_output != nil {
 		fields = append(fields, taskreport.FieldStdOutput)
 	}
@@ -38975,6 +39232,15 @@ func (m *TaskReportMutation) Fields() []string {
 	}
 	if m.end != nil {
 		fields = append(fields, taskreport.FieldEnd)
+	}
+	if m.started_at != nil {
+		fields = append(fields, taskreport.FieldStartedAt)
+	}
+	if m.status != nil {
+		fields = append(fields, taskreport.FieldStatus)
+	}
+	if m.timeout != nil {
+		fields = append(fields, taskreport.FieldTimeout)
 	}
 	return fields
 }
@@ -38992,6 +39258,12 @@ func (m *TaskReportMutation) Field(name string) (ent.Value, bool) {
 		return m.Failed()
 	case taskreport.FieldEnd:
 		return m.End()
+	case taskreport.FieldStartedAt:
+		return m.StartedAt()
+	case taskreport.FieldStatus:
+		return m.Status()
+	case taskreport.FieldTimeout:
+		return m.Timeout()
 	}
 	return nil, false
 }
@@ -39009,6 +39281,12 @@ func (m *TaskReportMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldFailed(ctx)
 	case taskreport.FieldEnd:
 		return m.OldEnd(ctx)
+	case taskreport.FieldStartedAt:
+		return m.OldStartedAt(ctx)
+	case taskreport.FieldStatus:
+		return m.OldStatus(ctx)
+	case taskreport.FieldTimeout:
+		return m.OldTimeout(ctx)
 	}
 	return nil, fmt.Errorf("unknown TaskReport field %s", name)
 }
@@ -39045,6 +39323,27 @@ func (m *TaskReportMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEnd(v)
+		return nil
+	case taskreport.FieldStartedAt:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStartedAt(v)
+		return nil
+	case taskreport.FieldStatus:
+		v, ok := value.(taskreport.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case taskreport.FieldTimeout:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimeout(v)
 		return nil
 	}
 	return fmt.Errorf("unknown TaskReport field %s", name)
@@ -39085,6 +39384,15 @@ func (m *TaskReportMutation) ClearedFields() []string {
 	if m.FieldCleared(taskreport.FieldEnd) {
 		fields = append(fields, taskreport.FieldEnd)
 	}
+	if m.FieldCleared(taskreport.FieldStartedAt) {
+		fields = append(fields, taskreport.FieldStartedAt)
+	}
+	if m.FieldCleared(taskreport.FieldStatus) {
+		fields = append(fields, taskreport.FieldStatus)
+	}
+	if m.FieldCleared(taskreport.FieldTimeout) {
+		fields = append(fields, taskreport.FieldTimeout)
+	}
 	return fields
 }
 
@@ -39108,6 +39416,15 @@ func (m *TaskReportMutation) ClearField(name string) error {
 	case taskreport.FieldEnd:
 		m.ClearEnd()
 		return nil
+	case taskreport.FieldStartedAt:
+		m.ClearStartedAt()
+		return nil
+	case taskreport.FieldStatus:
+		m.ClearStatus()
+		return nil
+	case taskreport.FieldTimeout:
+		m.ClearTimeout()
+		return nil
 	}
 	return fmt.Errorf("unknown TaskReport nullable field %s", name)
 }
@@ -39127,6 +39444,15 @@ func (m *TaskReportMutation) ResetField(name string) error {
 		return nil
 	case taskreport.FieldEnd:
 		m.ResetEnd()
+		return nil
+	case taskreport.FieldStartedAt:
+		m.ResetStartedAt()
+		return nil
+	case taskreport.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case taskreport.FieldTimeout:
+		m.ResetTimeout()
 		return nil
 	}
 	return fmt.Errorf("unknown TaskReport field %s", name)

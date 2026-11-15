@@ -151,6 +151,7 @@ func (Task) Fields() []ent.Field {
 		field.String("package_branch").Optional().Default(""),
 		field.String("package_arch").Optional().Default(""),
 		field.String("package_brew_type").Optional().Default(""),
+		field.Int("timeout").Optional().Default(0),
 	}
 }
 

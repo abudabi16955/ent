@@ -1915,6 +1915,33 @@ func (tu *TaskUpdate) ClearPackageBrewType() *TaskUpdate {
 	return tu
 }
 
+// SetTimeout sets the "timeout" field.
+func (tu *TaskUpdate) SetTimeout(i int) *TaskUpdate {
+	tu.mutation.ResetTimeout()
+	tu.mutation.SetTimeout(i)
+	return tu
+}
+
+// SetNillableTimeout sets the "timeout" field if the given value is not nil.
+func (tu *TaskUpdate) SetNillableTimeout(i *int) *TaskUpdate {
+	if i != nil {
+		tu.SetTimeout(*i)
+	}
+	return tu
+}
+
+// AddTimeout adds i to the "timeout" field.
+func (tu *TaskUpdate) AddTimeout(i int) *TaskUpdate {
+	tu.mutation.AddTimeout(i)
+	return tu
+}
+
+// ClearTimeout clears the value of the "timeout" field.
+func (tu *TaskUpdate) ClearTimeout() *TaskUpdate {
+	tu.mutation.ClearTimeout()
+	return tu
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (tu *TaskUpdate) AddTagIDs(ids ...int) *TaskUpdate {
 	tu.mutation.AddTagIDs(ids...)
@@ -2665,6 +2692,15 @@ func (tu *TaskUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.PackageBrewTypeCleared() {
 		_spec.ClearField(task.FieldPackageBrewType, field.TypeString)
+	}
+	if value, ok := tu.mutation.Timeout(); ok {
+		_spec.SetField(task.FieldTimeout, field.TypeInt, value)
+	}
+	if value, ok := tu.mutation.AddedTimeout(); ok {
+		_spec.AddField(task.FieldTimeout, field.TypeInt, value)
+	}
+	if tu.mutation.TimeoutCleared() {
+		_spec.ClearField(task.FieldTimeout, field.TypeInt)
 	}
 	if tu.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -4690,6 +4726,33 @@ func (tuo *TaskUpdateOne) ClearPackageBrewType() *TaskUpdateOne {
 	return tuo
 }
 
+// SetTimeout sets the "timeout" field.
+func (tuo *TaskUpdateOne) SetTimeout(i int) *TaskUpdateOne {
+	tuo.mutation.ResetTimeout()
+	tuo.mutation.SetTimeout(i)
+	return tuo
+}
+
+// SetNillableTimeout sets the "timeout" field if the given value is not nil.
+func (tuo *TaskUpdateOne) SetNillableTimeout(i *int) *TaskUpdateOne {
+	if i != nil {
+		tuo.SetTimeout(*i)
+	}
+	return tuo
+}
+
+// AddTimeout adds i to the "timeout" field.
+func (tuo *TaskUpdateOne) AddTimeout(i int) *TaskUpdateOne {
+	tuo.mutation.AddTimeout(i)
+	return tuo
+}
+
+// ClearTimeout clears the value of the "timeout" field.
+func (tuo *TaskUpdateOne) ClearTimeout() *TaskUpdateOne {
+	tuo.mutation.ClearTimeout()
+	return tuo
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (tuo *TaskUpdateOne) AddTagIDs(ids ...int) *TaskUpdateOne {
 	tuo.mutation.AddTagIDs(ids...)
@@ -5470,6 +5533,15 @@ func (tuo *TaskUpdateOne) sqlSave(ctx context.Context) (_node *Task, err error) 
 	}
 	if tuo.mutation.PackageBrewTypeCleared() {
 		_spec.ClearField(task.FieldPackageBrewType, field.TypeString)
+	}
+	if value, ok := tuo.mutation.Timeout(); ok {
+		_spec.SetField(task.FieldTimeout, field.TypeInt, value)
+	}
+	if value, ok := tuo.mutation.AddedTimeout(); ok {
+		_spec.AddField(task.FieldTimeout, field.TypeInt, value)
+	}
+	if tuo.mutation.TimeoutCleared() {
+		_spec.ClearField(task.FieldTimeout, field.TypeInt)
 	}
 	if tuo.mutation.TagsCleared() {
 		edge := &sqlgraph.EdgeSpec{

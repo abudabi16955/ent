@@ -26,6 +26,12 @@ type TaskReport struct {
 	Failed bool `json:"failed,omitempty"`
 	// End holds the value of the "end" field.
 	End string `json:"end,omitempty"`
+	// StartedAt holds the value of the "started_at" field.
+	StartedAt string `json:"started_at,omitempty"`
+	// Status holds the value of the "status" field.
+	Status taskreport.Status `json:"status,omitempty"`
+	// Timeout holds the value of the "timeout" field.
+	Timeout bool `json:"timeout,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TaskReportQuery when eager-loading is set.
 	Edges                      TaskReportEdges `json:"edges"`
@@ -72,11 +78,11 @@ func (*TaskReport) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case taskreport.FieldFailed:
+		case taskreport.FieldFailed, taskreport.FieldTimeout:
 			values[i] = new(sql.NullBool)
 		case taskreport.FieldID:
 			values[i] = new(sql.NullInt64)
-		case taskreport.FieldStdOutput, taskreport.FieldStdError, taskreport.FieldEnd:
+		case taskreport.FieldStdOutput, taskreport.FieldStdError, taskreport.FieldEnd, taskreport.FieldStartedAt, taskreport.FieldStatus:
 			values[i] = new(sql.NullString)
 		case taskreport.ForeignKeys[0]: // profile_issue_tasksreports
 			values[i] = new(sql.NullInt64)
@@ -126,6 +132,24 @@ func (tr *TaskReport) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field end", values[i])
 			} else if value.Valid {
 				tr.End = value.String
+			}
+		case taskreport.FieldStartedAt:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field started_at", values[i])
+			} else if value.Valid {
+				tr.StartedAt = value.String
+			}
+		case taskreport.FieldStatus:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field status", values[i])
+			} else if value.Valid {
+				tr.Status = taskreport.Status(value.String)
+			}
+		case taskreport.FieldTimeout:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field timeout", values[i])
+			} else if value.Valid {
+				tr.Timeout = value.Bool
 			}
 		case taskreport.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -198,6 +222,15 @@ func (tr *TaskReport) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("end=")
 	builder.WriteString(tr.End)
+	builder.WriteString(", ")
+	builder.WriteString("started_at=")
+	builder.WriteString(tr.StartedAt)
+	builder.WriteString(", ")
+	builder.WriteString("status=")
+	builder.WriteString(fmt.Sprintf("%v", tr.Status))
+	builder.WriteString(", ")
+	builder.WriteString("timeout=")
+	builder.WriteString(fmt.Sprintf("%v", tr.Timeout))
 	builder.WriteByte(')')
 	return builder.String()
 }

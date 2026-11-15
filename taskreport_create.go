@@ -79,6 +79,48 @@ func (trc *TaskReportCreate) SetNillableEnd(s *string) *TaskReportCreate {
 	return trc
 }
 
+// SetStartedAt sets the "started_at" field.
+func (trc *TaskReportCreate) SetStartedAt(s string) *TaskReportCreate {
+	trc.mutation.SetStartedAt(s)
+	return trc
+}
+
+// SetNillableStartedAt sets the "started_at" field if the given value is not nil.
+func (trc *TaskReportCreate) SetNillableStartedAt(s *string) *TaskReportCreate {
+	if s != nil {
+		trc.SetStartedAt(*s)
+	}
+	return trc
+}
+
+// SetStatus sets the "status" field.
+func (trc *TaskReportCreate) SetStatus(t taskreport.Status) *TaskReportCreate {
+	trc.mutation.SetStatus(t)
+	return trc
+}
+
+// SetNillableStatus sets the "status" field if the given value is not nil.
+func (trc *TaskReportCreate) SetNillableStatus(t *taskreport.Status) *TaskReportCreate {
+	if t != nil {
+		trc.SetStatus(*t)
+	}
+	return trc
+}
+
+// SetTimeout sets the "timeout" field.
+func (trc *TaskReportCreate) SetTimeout(b bool) *TaskReportCreate {
+	trc.mutation.SetTimeout(b)
+	return trc
+}
+
+// SetNillableTimeout sets the "timeout" field if the given value is not nil.
+func (trc *TaskReportCreate) SetNillableTimeout(b *bool) *TaskReportCreate {
+	if b != nil {
+		trc.SetTimeout(*b)
+	}
+	return trc
+}
+
 // SetProfileissueID sets the "profileissue" edge to the ProfileIssue entity by ID.
 func (trc *TaskReportCreate) SetProfileissueID(id int) *TaskReportCreate {
 	trc.mutation.SetProfileissueID(id)
@@ -168,12 +210,29 @@ func (trc *TaskReportCreate) defaults() {
 		v := taskreport.DefaultEnd
 		trc.mutation.SetEnd(v)
 	}
+	if _, ok := trc.mutation.StartedAt(); !ok {
+		v := taskreport.DefaultStartedAt
+		trc.mutation.SetStartedAt(v)
+	}
+	if _, ok := trc.mutation.Status(); !ok {
+		v := taskreport.DefaultStatus
+		trc.mutation.SetStatus(v)
+	}
+	if _, ok := trc.mutation.Timeout(); !ok {
+		v := taskreport.DefaultTimeout
+		trc.mutation.SetTimeout(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (trc *TaskReportCreate) check() error {
 	if _, ok := trc.mutation.Failed(); !ok {
 		return &ValidationError{Name: "failed", err: errors.New(`ent: missing required field "TaskReport.failed"`)}
+	}
+	if v, ok := trc.mutation.Status(); ok {
+		if err := taskreport.StatusValidator(v); err != nil {
+			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "TaskReport.status": %w`, err)}
+		}
 	}
 	return nil
 }
@@ -217,6 +276,18 @@ func (trc *TaskReportCreate) createSpec() (*TaskReport, *sqlgraph.CreateSpec) {
 	if value, ok := trc.mutation.End(); ok {
 		_spec.SetField(taskreport.FieldEnd, field.TypeString, value)
 		_node.End = value
+	}
+	if value, ok := trc.mutation.StartedAt(); ok {
+		_spec.SetField(taskreport.FieldStartedAt, field.TypeString, value)
+		_node.StartedAt = value
+	}
+	if value, ok := trc.mutation.Status(); ok {
+		_spec.SetField(taskreport.FieldStatus, field.TypeEnum, value)
+		_node.Status = value
+	}
+	if value, ok := trc.mutation.Timeout(); ok {
+		_spec.SetField(taskreport.FieldTimeout, field.TypeBool, value)
+		_node.Timeout = value
 	}
 	if nodes := trc.mutation.ProfileissueIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -370,6 +441,60 @@ func (u *TaskReportUpsert) ClearEnd() *TaskReportUpsert {
 	return u
 }
 
+// SetStartedAt sets the "started_at" field.
+func (u *TaskReportUpsert) SetStartedAt(v string) *TaskReportUpsert {
+	u.Set(taskreport.FieldStartedAt, v)
+	return u
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *TaskReportUpsert) UpdateStartedAt() *TaskReportUpsert {
+	u.SetExcluded(taskreport.FieldStartedAt)
+	return u
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *TaskReportUpsert) ClearStartedAt() *TaskReportUpsert {
+	u.SetNull(taskreport.FieldStartedAt)
+	return u
+}
+
+// SetStatus sets the "status" field.
+func (u *TaskReportUpsert) SetStatus(v taskreport.Status) *TaskReportUpsert {
+	u.Set(taskreport.FieldStatus, v)
+	return u
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *TaskReportUpsert) UpdateStatus() *TaskReportUpsert {
+	u.SetExcluded(taskreport.FieldStatus)
+	return u
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *TaskReportUpsert) ClearStatus() *TaskReportUpsert {
+	u.SetNull(taskreport.FieldStatus)
+	return u
+}
+
+// SetTimeout sets the "timeout" field.
+func (u *TaskReportUpsert) SetTimeout(v bool) *TaskReportUpsert {
+	u.Set(taskreport.FieldTimeout, v)
+	return u
+}
+
+// UpdateTimeout sets the "timeout" field to the value that was provided on create.
+func (u *TaskReportUpsert) UpdateTimeout() *TaskReportUpsert {
+	u.SetExcluded(taskreport.FieldTimeout)
+	return u
+}
+
+// ClearTimeout clears the value of the "timeout" field.
+func (u *TaskReportUpsert) ClearTimeout() *TaskReportUpsert {
+	u.SetNull(taskreport.FieldTimeout)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create.
 // Using this option is equivalent to using:
 //
@@ -484,6 +609,69 @@ func (u *TaskReportUpsertOne) UpdateEnd() *TaskReportUpsertOne {
 func (u *TaskReportUpsertOne) ClearEnd() *TaskReportUpsertOne {
 	return u.Update(func(s *TaskReportUpsert) {
 		s.ClearEnd()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *TaskReportUpsertOne) SetStartedAt(v string) *TaskReportUpsertOne {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *TaskReportUpsertOne) UpdateStartedAt() *TaskReportUpsertOne {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *TaskReportUpsertOne) ClearStartedAt() *TaskReportUpsertOne {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.ClearStartedAt()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *TaskReportUpsertOne) SetStatus(v taskreport.Status) *TaskReportUpsertOne {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *TaskReportUpsertOne) UpdateStatus() *TaskReportUpsertOne {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *TaskReportUpsertOne) ClearStatus() *TaskReportUpsertOne {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.ClearStatus()
+	})
+}
+
+// SetTimeout sets the "timeout" field.
+func (u *TaskReportUpsertOne) SetTimeout(v bool) *TaskReportUpsertOne {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.SetTimeout(v)
+	})
+}
+
+// UpdateTimeout sets the "timeout" field to the value that was provided on create.
+func (u *TaskReportUpsertOne) UpdateTimeout() *TaskReportUpsertOne {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.UpdateTimeout()
+	})
+}
+
+// ClearTimeout clears the value of the "timeout" field.
+func (u *TaskReportUpsertOne) ClearTimeout() *TaskReportUpsertOne {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.ClearTimeout()
 	})
 }
 
@@ -765,6 +953,69 @@ func (u *TaskReportUpsertBulk) UpdateEnd() *TaskReportUpsertBulk {
 func (u *TaskReportUpsertBulk) ClearEnd() *TaskReportUpsertBulk {
 	return u.Update(func(s *TaskReportUpsert) {
 		s.ClearEnd()
+	})
+}
+
+// SetStartedAt sets the "started_at" field.
+func (u *TaskReportUpsertBulk) SetStartedAt(v string) *TaskReportUpsertBulk {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.SetStartedAt(v)
+	})
+}
+
+// UpdateStartedAt sets the "started_at" field to the value that was provided on create.
+func (u *TaskReportUpsertBulk) UpdateStartedAt() *TaskReportUpsertBulk {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.UpdateStartedAt()
+	})
+}
+
+// ClearStartedAt clears the value of the "started_at" field.
+func (u *TaskReportUpsertBulk) ClearStartedAt() *TaskReportUpsertBulk {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.ClearStartedAt()
+	})
+}
+
+// SetStatus sets the "status" field.
+func (u *TaskReportUpsertBulk) SetStatus(v taskreport.Status) *TaskReportUpsertBulk {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.SetStatus(v)
+	})
+}
+
+// UpdateStatus sets the "status" field to the value that was provided on create.
+func (u *TaskReportUpsertBulk) UpdateStatus() *TaskReportUpsertBulk {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *TaskReportUpsertBulk) ClearStatus() *TaskReportUpsertBulk {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.ClearStatus()
+	})
+}
+
+// SetTimeout sets the "timeout" field.
+func (u *TaskReportUpsertBulk) SetTimeout(v bool) *TaskReportUpsertBulk {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.SetTimeout(v)
+	})
+}
+
+// UpdateTimeout sets the "timeout" field to the value that was provided on create.
+func (u *TaskReportUpsertBulk) UpdateTimeout() *TaskReportUpsertBulk {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.UpdateTimeout()
+	})
+}
+
+// ClearTimeout clears the value of the "timeout" field.
+func (u *TaskReportUpsertBulk) ClearTimeout() *TaskReportUpsertBulk {
+	return u.Update(func(s *TaskReportUpsert) {
+		s.ClearTimeout()
 	})
 }
 

@@ -1325,6 +1325,20 @@ func (tc *TaskCreate) SetNillablePackageBrewType(s *string) *TaskCreate {
 	return tc
 }
 
+// SetTimeout sets the "timeout" field.
+func (tc *TaskCreate) SetTimeout(i int) *TaskCreate {
+	tc.mutation.SetTimeout(i)
+	return tc
+}
+
+// SetNillableTimeout sets the "timeout" field if the given value is not nil.
+func (tc *TaskCreate) SetNillableTimeout(i *int) *TaskCreate {
+	if i != nil {
+		tc.SetTimeout(*i)
+	}
+	return tc
+}
+
 // AddTagIDs adds the "tags" edge to the Tag entity by IDs.
 func (tc *TaskCreate) AddTagIDs(ids ...int) *TaskCreate {
 	tc.mutation.AddTagIDs(ids...)
@@ -1652,6 +1666,10 @@ func (tc *TaskCreate) defaults() {
 	if _, ok := tc.mutation.PackageBrewType(); !ok {
 		v := task.DefaultPackageBrewType
 		tc.mutation.SetPackageBrewType(v)
+	}
+	if _, ok := tc.mutation.Timeout(); !ok {
+		v := task.DefaultTimeout
+		tc.mutation.SetTimeout(v)
 	}
 }
 
@@ -2103,6 +2121,10 @@ func (tc *TaskCreate) createSpec() (*Task, *sqlgraph.CreateSpec) {
 	if value, ok := tc.mutation.PackageBrewType(); ok {
 		_spec.SetField(task.FieldPackageBrewType, field.TypeString, value)
 		_node.PackageBrewType = value
+	}
+	if value, ok := tc.mutation.Timeout(); ok {
+		_spec.SetField(task.FieldTimeout, field.TypeInt, value)
+		_node.Timeout = value
 	}
 	if nodes := tc.mutation.TagsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -3894,6 +3916,30 @@ func (u *TaskUpsert) UpdatePackageBrewType() *TaskUpsert {
 // ClearPackageBrewType clears the value of the "package_brew_type" field.
 func (u *TaskUpsert) ClearPackageBrewType() *TaskUpsert {
 	u.SetNull(task.FieldPackageBrewType)
+	return u
+}
+
+// SetTimeout sets the "timeout" field.
+func (u *TaskUpsert) SetTimeout(v int) *TaskUpsert {
+	u.Set(task.FieldTimeout, v)
+	return u
+}
+
+// UpdateTimeout sets the "timeout" field to the value that was provided on create.
+func (u *TaskUpsert) UpdateTimeout() *TaskUpsert {
+	u.SetExcluded(task.FieldTimeout)
+	return u
+}
+
+// AddTimeout adds v to the "timeout" field.
+func (u *TaskUpsert) AddTimeout(v int) *TaskUpsert {
+	u.Add(task.FieldTimeout, v)
+	return u
+}
+
+// ClearTimeout clears the value of the "timeout" field.
+func (u *TaskUpsert) ClearTimeout() *TaskUpsert {
+	u.SetNull(task.FieldTimeout)
 	return u
 }
 
@@ -5908,6 +5954,34 @@ func (u *TaskUpsertOne) UpdatePackageBrewType() *TaskUpsertOne {
 func (u *TaskUpsertOne) ClearPackageBrewType() *TaskUpsertOne {
 	return u.Update(func(s *TaskUpsert) {
 		s.ClearPackageBrewType()
+	})
+}
+
+// SetTimeout sets the "timeout" field.
+func (u *TaskUpsertOne) SetTimeout(v int) *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetTimeout(v)
+	})
+}
+
+// AddTimeout adds v to the "timeout" field.
+func (u *TaskUpsertOne) AddTimeout(v int) *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.AddTimeout(v)
+	})
+}
+
+// UpdateTimeout sets the "timeout" field to the value that was provided on create.
+func (u *TaskUpsertOne) UpdateTimeout() *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdateTimeout()
+	})
+}
+
+// ClearTimeout clears the value of the "timeout" field.
+func (u *TaskUpsertOne) ClearTimeout() *TaskUpsertOne {
+	return u.Update(func(s *TaskUpsert) {
+		s.ClearTimeout()
 	})
 }
 
@@ -8086,6 +8160,34 @@ func (u *TaskUpsertBulk) UpdatePackageBrewType() *TaskUpsertBulk {
 func (u *TaskUpsertBulk) ClearPackageBrewType() *TaskUpsertBulk {
 	return u.Update(func(s *TaskUpsert) {
 		s.ClearPackageBrewType()
+	})
+}
+
+// SetTimeout sets the "timeout" field.
+func (u *TaskUpsertBulk) SetTimeout(v int) *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.SetTimeout(v)
+	})
+}
+
+// AddTimeout adds v to the "timeout" field.
+func (u *TaskUpsertBulk) AddTimeout(v int) *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.AddTimeout(v)
+	})
+}
+
+// UpdateTimeout sets the "timeout" field to the value that was provided on create.
+func (u *TaskUpsertBulk) UpdateTimeout() *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.UpdateTimeout()
+	})
+}
+
+// ClearTimeout clears the value of the "timeout" field.
+func (u *TaskUpsertBulk) ClearTimeout() *TaskUpsertBulk {
+	return u.Update(func(s *TaskUpsert) {
+		s.ClearTimeout()
 	})
 }
 

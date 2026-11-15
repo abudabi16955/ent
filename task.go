@@ -206,6 +206,8 @@ type Task struct {
 	PackageArch string `json:"package_arch,omitempty"`
 	// PackageBrewType holds the value of the "package_brew_type" field.
 	PackageBrewType string `json:"package_brew_type,omitempty"`
+	// Timeout holds the value of the "timeout" field.
+	Timeout int `json:"timeout,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the TaskQuery when eager-loading is set.
 	Edges         TaskEdges `json:"edges"`
@@ -262,7 +264,7 @@ func (*Task) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case task.FieldPackageLatest, task.FieldRegistryHex, task.FieldRegistryForce, task.FieldLocalUserDisable, task.FieldLocalUserPasswordChangeNotAllowed, task.FieldLocalUserPasswordChangeRequired, task.FieldLocalUserPasswordNeverExpires, task.FieldLocalUserAppend, task.FieldLocalUserCreateHome, task.FieldLocalUserForce, task.FieldLocalUserGenerateSSHKey, task.FieldLocalUserMoveHome, task.FieldLocalUserNonunique, task.FieldLocalUserPasswordLock, task.FieldLocalUserSystem, task.FieldLocalGroupSystem, task.FieldLocalGroupForce, task.FieldBrewUpdate, task.FieldBrewUpgradeAll, task.FieldBrewGreedy, task.FieldAptAllowDowngrade, task.FieldAptFailOnAutoremove, task.FieldAptForce, task.FieldAptInstallRecommends, task.FieldAptOnlyUpgrade, task.FieldAptPurge, task.FieldAptUpdateCache, task.FieldNetbirdAllowExtraDNSLabels, task.FieldIgnoreErrors, task.FieldDisabled:
 			values[i] = new(sql.NullBool)
-		case task.FieldID, task.FieldVersion, task.FieldTenant, task.FieldOrder:
+		case task.FieldID, task.FieldVersion, task.FieldTenant, task.FieldOrder, task.FieldTimeout:
 			values[i] = new(sql.NullInt64)
 		case task.FieldName, task.FieldType, task.FieldPackageID, task.FieldPackageName, task.FieldRegistryKey, task.FieldRegistryKeyValueName, task.FieldRegistryKeyValueType, task.FieldRegistryKeyValueData, task.FieldLocalUserUsername, task.FieldLocalUserDescription, task.FieldLocalUserFullname, task.FieldLocalUserPassword, task.FieldLocalUserExpires, task.FieldLocalUserGroup, task.FieldLocalUserGroups, task.FieldLocalUserHome, task.FieldLocalUserPasswordExpireAccountDisable, task.FieldLocalUserPasswordExpireMax, task.FieldLocalUserPasswordExpireMin, task.FieldLocalUserPasswordExpireWarn, task.FieldLocalUserSeuser, task.FieldLocalUserShell, task.FieldLocalUserSkeleton, task.FieldLocalUserID, task.FieldLocalUserIDMax, task.FieldLocalUserIDMin, task.FieldLocalUserSSHKeyBits, task.FieldLocalUserSSHKeyComment, task.FieldLocalUserSSHKeyFile, task.FieldLocalUserSSHKeyPassphrase, task.FieldLocalUserSSHKeyType, task.FieldLocalUserUmask, task.FieldLocalGroupID, task.FieldLocalGroupName, task.FieldLocalGroupDescription, task.FieldLocalGroupMembers, task.FieldLocalGroupMembersToInclude, task.FieldLocalGroupMembersToExclude, task.FieldMsiProductid, task.FieldMsiPath, task.FieldMsiArguments, task.FieldMsiFileHash, task.FieldMsiFileHashAlg, task.FieldMsiLogPath, task.FieldScript, task.FieldScriptExecutable, task.FieldScriptCreates, task.FieldScriptRun, task.FieldAgentType, task.FieldBrewUpgradeOptions, task.FieldBrewInstallOptions, task.FieldPackageVersion, task.FieldAptDeb, task.FieldAptDpkgOptions, task.FieldAptName, task.FieldAptUpgradeType, task.FieldNetbirdGroups, task.FieldPackageBranch, task.FieldPackageArch, task.FieldPackageBrewType:
 			values[i] = new(sql.NullString)
@@ -855,6 +857,12 @@ func (t *Task) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				t.PackageBrewType = value.String
 			}
+		case task.FieldTimeout:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field timeout", values[i])
+			} else if value.Valid {
+				t.Timeout = int(value.Int64)
+			}
 		case task.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for edge-field profile_tasks", value)
@@ -1194,6 +1202,9 @@ func (t *Task) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("package_brew_type=")
 	builder.WriteString(t.PackageBrewType)
+	builder.WriteString(", ")
+	builder.WriteString("timeout=")
+	builder.WriteString(fmt.Sprintf("%v", t.Timeout))
 	builder.WriteByte(')')
 	return builder.String()
 }

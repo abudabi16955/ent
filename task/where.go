@@ -495,6 +495,11 @@ func PackageBrewType(v string) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldPackageBrewType, v))
 }
 
+// Timeout applies equality check predicate on the "timeout" field. It's identical to TimeoutEQ.
+func Timeout(v int) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldTimeout, v))
+}
+
 // NameEQ applies the EQ predicate on the "name" field.
 func NameEQ(v string) predicate.Task {
 	return predicate.Task(sql.FieldEQ(FieldName, v))
@@ -5493,6 +5498,56 @@ func PackageBrewTypeEqualFold(v string) predicate.Task {
 // PackageBrewTypeContainsFold applies the ContainsFold predicate on the "package_brew_type" field.
 func PackageBrewTypeContainsFold(v string) predicate.Task {
 	return predicate.Task(sql.FieldContainsFold(FieldPackageBrewType, v))
+}
+
+// TimeoutEQ applies the EQ predicate on the "timeout" field.
+func TimeoutEQ(v int) predicate.Task {
+	return predicate.Task(sql.FieldEQ(FieldTimeout, v))
+}
+
+// TimeoutNEQ applies the NEQ predicate on the "timeout" field.
+func TimeoutNEQ(v int) predicate.Task {
+	return predicate.Task(sql.FieldNEQ(FieldTimeout, v))
+}
+
+// TimeoutIn applies the In predicate on the "timeout" field.
+func TimeoutIn(vs ...int) predicate.Task {
+	return predicate.Task(sql.FieldIn(FieldTimeout, vs...))
+}
+
+// TimeoutNotIn applies the NotIn predicate on the "timeout" field.
+func TimeoutNotIn(vs ...int) predicate.Task {
+	return predicate.Task(sql.FieldNotIn(FieldTimeout, vs...))
+}
+
+// TimeoutGT applies the GT predicate on the "timeout" field.
+func TimeoutGT(v int) predicate.Task {
+	return predicate.Task(sql.FieldGT(FieldTimeout, v))
+}
+
+// TimeoutGTE applies the GTE predicate on the "timeout" field.
+func TimeoutGTE(v int) predicate.Task {
+	return predicate.Task(sql.FieldGTE(FieldTimeout, v))
+}
+
+// TimeoutLT applies the LT predicate on the "timeout" field.
+func TimeoutLT(v int) predicate.Task {
+	return predicate.Task(sql.FieldLT(FieldTimeout, v))
+}
+
+// TimeoutLTE applies the LTE predicate on the "timeout" field.
+func TimeoutLTE(v int) predicate.Task {
+	return predicate.Task(sql.FieldLTE(FieldTimeout, v))
+}
+
+// TimeoutIsNil applies the IsNil predicate on the "timeout" field.
+func TimeoutIsNil() predicate.Task {
+	return predicate.Task(sql.FieldIsNull(FieldTimeout))
+}
+
+// TimeoutNotNil applies the NotNil predicate on the "timeout" field.
+func TimeoutNotNil() predicate.Task {
+	return predicate.Task(sql.FieldNotNull(FieldTimeout))
 }
 
 // HasTags applies the HasEdge predicate on the "tags" edge.
