@@ -45,6 +45,18 @@ func (f AppFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AppMutation", m)
 }
 
+// The AuditLogFunc type is an adapter to allow the use of ordinary
+// function as AuditLog mutator.
+type AuditLogFunc func(context.Context, *ent.AuditLogMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AuditLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AuditLogMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AuditLogMutation", m)
+}
+
 // The AuthenticationFunc type is an adapter to allow the use of ordinary
 // function as Authentication mutator.
 type AuthenticationFunc func(context.Context, *ent.AuthenticationMutation) (ent.Value, error)
@@ -55,6 +67,18 @@ func (f AuthenticationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AuthenticationMutation", m)
+}
+
+// The BitlockerKeyFunc type is an adapter to allow the use of ordinary
+// function as BitlockerKey mutator.
+type BitlockerKeyFunc func(context.Context, *ent.BitlockerKeyMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f BitlockerKeyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.BitlockerKeyMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.BitlockerKeyMutation", m)
 }
 
 // The CertificateFunc type is an adapter to allow the use of ordinary

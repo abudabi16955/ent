@@ -7,7 +7,9 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/open-uem/ent/agent"
+	"github.com/open-uem/ent/auditlog"
 	"github.com/open-uem/ent/authentication"
+	"github.com/open-uem/ent/bitlockerkey"
 	"github.com/open-uem/ent/deployment"
 	"github.com/open-uem/ent/logicaldisk"
 	"github.com/open-uem/ent/netbird"
@@ -138,6 +140,12 @@ func init() {
 	agentDescID := agentFields[0].Descriptor()
 	// agent.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	agent.IDValidator = agentDescID.Validators[0].(func(string) error)
+	auditlogFields := schema.AuditLog{}.Fields()
+	_ = auditlogFields
+	// auditlogDescCreatedAt is the schema descriptor for created_at field.
+	auditlogDescCreatedAt := auditlogFields[5].Descriptor()
+	// auditlog.DefaultCreatedAt holds the default value on creation for the created_at field.
+	auditlog.DefaultCreatedAt = auditlogDescCreatedAt.Default.(func() time.Time)
 	authenticationFields := schema.Authentication{}.Fields()
 	_ = authenticationFields
 	// authenticationDescUseCertificates is the schema descriptor for use_certificates field.
@@ -184,6 +192,26 @@ func init() {
 	authenticationDescUsePasswd := authenticationFields[10].Descriptor()
 	// authentication.DefaultUsePasswd holds the default value on creation for the use_passwd field.
 	authentication.DefaultUsePasswd = authenticationDescUsePasswd.Default.(bool)
+	bitlockerkeyFields := schema.BitlockerKey{}.Fields()
+	_ = bitlockerkeyFields
+	// bitlockerkeyDescDriveLetter is the schema descriptor for drive_letter field.
+	bitlockerkeyDescDriveLetter := bitlockerkeyFields[1].Descriptor()
+	// bitlockerkey.DefaultDriveLetter holds the default value on creation for the drive_letter field.
+	bitlockerkey.DefaultDriveLetter = bitlockerkeyDescDriveLetter.Default.(string)
+	// bitlockerkeyDescIsActive is the schema descriptor for is_active field.
+	bitlockerkeyDescIsActive := bitlockerkeyFields[4].Descriptor()
+	// bitlockerkey.DefaultIsActive holds the default value on creation for the is_active field.
+	bitlockerkey.DefaultIsActive = bitlockerkeyDescIsActive.Default.(bool)
+	// bitlockerkeyDescCreatedAt is the schema descriptor for created_at field.
+	bitlockerkeyDescCreatedAt := bitlockerkeyFields[5].Descriptor()
+	// bitlockerkey.DefaultCreatedAt holds the default value on creation for the created_at field.
+	bitlockerkey.DefaultCreatedAt = bitlockerkeyDescCreatedAt.Default.(func() time.Time)
+	// bitlockerkeyDescUpdatedAt is the schema descriptor for updated_at field.
+	bitlockerkeyDescUpdatedAt := bitlockerkeyFields[6].Descriptor()
+	// bitlockerkey.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	bitlockerkey.DefaultUpdatedAt = bitlockerkeyDescUpdatedAt.Default.(func() time.Time)
+	// bitlockerkey.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	bitlockerkey.UpdateDefaultUpdatedAt = bitlockerkeyDescUpdatedAt.UpdateDefault.(func() time.Time)
 	deploymentFields := schema.Deployment{}.Fields()
 	_ = deploymentFields
 	// deploymentDescInstalled is the schema descriptor for installed field.

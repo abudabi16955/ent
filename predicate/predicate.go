@@ -15,8 +15,14 @@ type Antivirus func(*sql.Selector)
 // App is the predicate function for app builders.
 type App func(*sql.Selector)
 
+// AuditLog is the predicate function for auditlog builders.
+type AuditLog func(*sql.Selector)
+
 // Authentication is the predicate function for authentication builders.
 type Authentication func(*sql.Selector)
+
+// BitlockerKey is the predicate function for bitlockerkey builders.
+type BitlockerKey func(*sql.Selector)
 
 // Certificate is the predicate function for certificate builders.
 type Certificate func(*sql.Selector)
