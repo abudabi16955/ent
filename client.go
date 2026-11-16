@@ -19,7 +19,9 @@ import (
 	"github.com/open-uem/ent/agent"
 	"github.com/open-uem/ent/antivirus"
 	"github.com/open-uem/ent/app"
+	"github.com/open-uem/ent/auditlog"
 	"github.com/open-uem/ent/authentication"
+	"github.com/open-uem/ent/bitlockerkey"
 	"github.com/open-uem/ent/certificate"
 	"github.com/open-uem/ent/computer"
 	"github.com/open-uem/ent/deployment"
@@ -67,8 +69,12 @@ type Client struct {
 	Antivirus *AntivirusClient
 	// App is the client for interacting with the App builders.
 	App *AppClient
+	// AuditLog is the client for interacting with the AuditLog builders.
+	AuditLog *AuditLogClient
 	// Authentication is the client for interacting with the Authentication builders.
 	Authentication *AuthenticationClient
+	// BitlockerKey is the client for interacting with the BitlockerKey builders.
+	BitlockerKey *BitlockerKeyClient
 	// Certificate is the client for interacting with the Certificate builders.
 	Certificate *CertificateClient
 	// Computer is the client for interacting with the Computer builders.
@@ -151,7 +157,9 @@ func (c *Client) init() {
 	c.Agent = NewAgentClient(c.config)
 	c.Antivirus = NewAntivirusClient(c.config)
 	c.App = NewAppClient(c.config)
+	c.AuditLog = NewAuditLogClient(c.config)
 	c.Authentication = NewAuthenticationClient(c.config)
+	c.BitlockerKey = NewBitlockerKeyClient(c.config)
 	c.Certificate = NewCertificateClient(c.config)
 	c.Computer = NewComputerClient(c.config)
 	c.Deployment = NewDeploymentClient(c.config)
@@ -281,7 +289,9 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Agent:                 NewAgentClient(cfg),
 		Antivirus:             NewAntivirusClient(cfg),
 		App:                   NewAppClient(cfg),
+		AuditLog:              NewAuditLogClient(cfg),
 		Authentication:        NewAuthenticationClient(cfg),
+		BitlockerKey:          NewBitlockerKeyClient(cfg),
 		Certificate:           NewCertificateClient(cfg),
 		Computer:              NewComputerClient(cfg),
 		Deployment:            NewDeploymentClient(cfg),
@@ -338,7 +348,9 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Agent:                 NewAgentClient(cfg),
 		Antivirus:             NewAntivirusClient(cfg),
 		App:                   NewAppClient(cfg),
+		AuditLog:              NewAuditLogClient(cfg),
 		Authentication:        NewAuthenticationClient(cfg),
+		BitlockerKey:          NewBitlockerKeyClient(cfg),
 		Certificate:           NewCertificateClient(cfg),
 		Computer:              NewComputerClient(cfg),
 		Deployment:            NewDeploymentClient(cfg),
@@ -402,13 +414,14 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Agent, c.Antivirus, c.App, c.Authentication, c.Certificate, c.Computer,
-		c.Deployment, c.LogicalDisk, c.MemorySlot, c.Metadata, c.Monitor, c.Netbird,
-		c.NetbirdSettings, c.NetworkAdapter, c.OperatingSystem, c.OrgMetadata,
-		c.PhysicalDisk, c.Printer, c.Profile, c.ProfileIssue, c.RecoveryCode,
-		c.Release, c.Revocation, c.Rustdesk, c.Server, c.Sessions, c.Settings, c.Share,
-		c.Site, c.SoftwarePackage, c.SystemUpdate, c.Tag, c.Task, c.TaskReport,
-		c.Tenant, c.Update, c.User, c.WingetConfigExclusion,
+		c.Agent, c.Antivirus, c.App, c.AuditLog, c.Authentication, c.BitlockerKey,
+		c.Certificate, c.Computer, c.Deployment, c.LogicalDisk, c.MemorySlot,
+		c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings, c.NetworkAdapter,
+		c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile,
+		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server,
+		c.Sessions, c.Settings, c.Share, c.Site, c.SoftwarePackage, c.SystemUpdate,
+		c.Tag, c.Task, c.TaskReport, c.Tenant, c.Update, c.User,
+		c.WingetConfigExclusion,
 	} {
 		n.Use(hooks...)
 	}
@@ -418,13 +431,14 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Agent, c.Antivirus, c.App, c.Authentication, c.Certificate, c.Computer,
-		c.Deployment, c.LogicalDisk, c.MemorySlot, c.Metadata, c.Monitor, c.Netbird,
-		c.NetbirdSettings, c.NetworkAdapter, c.OperatingSystem, c.OrgMetadata,
-		c.PhysicalDisk, c.Printer, c.Profile, c.ProfileIssue, c.RecoveryCode,
-		c.Release, c.Revocation, c.Rustdesk, c.Server, c.Sessions, c.Settings, c.Share,
-		c.Site, c.SoftwarePackage, c.SystemUpdate, c.Tag, c.Task, c.TaskReport,
-		c.Tenant, c.Update, c.User, c.WingetConfigExclusion,
+		c.Agent, c.Antivirus, c.App, c.AuditLog, c.Authentication, c.BitlockerKey,
+		c.Certificate, c.Computer, c.Deployment, c.LogicalDisk, c.MemorySlot,
+		c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings, c.NetworkAdapter,
+		c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile,
+		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server,
+		c.Sessions, c.Settings, c.Share, c.Site, c.SoftwarePackage, c.SystemUpdate,
+		c.Tag, c.Task, c.TaskReport, c.Tenant, c.Update, c.User,
+		c.WingetConfigExclusion,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -439,8 +453,12 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Antivirus.mutate(ctx, m)
 	case *AppMutation:
 		return c.App.mutate(ctx, m)
+	case *AuditLogMutation:
+		return c.AuditLog.mutate(ctx, m)
 	case *AuthenticationMutation:
 		return c.Authentication.mutate(ctx, m)
+	case *BitlockerKeyMutation:
+		return c.BitlockerKey.mutate(ctx, m)
 	case *CertificateMutation:
 		return c.Certificate.mutate(ctx, m)
 	case *ComputerMutation:
@@ -1281,6 +1299,139 @@ func (c *AppClient) mutate(ctx context.Context, m *AppMutation) (Value, error) {
 	}
 }
 
+// AuditLogClient is a client for the AuditLog schema.
+type AuditLogClient struct {
+	config
+}
+
+// NewAuditLogClient returns a client for the AuditLog from the given config.
+func NewAuditLogClient(c config) *AuditLogClient {
+	return &AuditLogClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `auditlog.Hooks(f(g(h())))`.
+func (c *AuditLogClient) Use(hooks ...Hook) {
+	c.hooks.AuditLog = append(c.hooks.AuditLog, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `auditlog.Intercept(f(g(h())))`.
+func (c *AuditLogClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AuditLog = append(c.inters.AuditLog, interceptors...)
+}
+
+// Create returns a builder for creating a AuditLog entity.
+func (c *AuditLogClient) Create() *AuditLogCreate {
+	mutation := newAuditLogMutation(c.config, OpCreate)
+	return &AuditLogCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AuditLog entities.
+func (c *AuditLogClient) CreateBulk(builders ...*AuditLogCreate) *AuditLogCreateBulk {
+	return &AuditLogCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AuditLogClient) MapCreateBulk(slice any, setFunc func(*AuditLogCreate, int)) *AuditLogCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AuditLogCreateBulk{err: fmt.Errorf("calling to AuditLogClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AuditLogCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AuditLogCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AuditLog.
+func (c *AuditLogClient) Update() *AuditLogUpdate {
+	mutation := newAuditLogMutation(c.config, OpUpdate)
+	return &AuditLogUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AuditLogClient) UpdateOne(al *AuditLog) *AuditLogUpdateOne {
+	mutation := newAuditLogMutation(c.config, OpUpdateOne, withAuditLog(al))
+	return &AuditLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AuditLogClient) UpdateOneID(id int) *AuditLogUpdateOne {
+	mutation := newAuditLogMutation(c.config, OpUpdateOne, withAuditLogID(id))
+	return &AuditLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AuditLog.
+func (c *AuditLogClient) Delete() *AuditLogDelete {
+	mutation := newAuditLogMutation(c.config, OpDelete)
+	return &AuditLogDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AuditLogClient) DeleteOne(al *AuditLog) *AuditLogDeleteOne {
+	return c.DeleteOneID(al.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AuditLogClient) DeleteOneID(id int) *AuditLogDeleteOne {
+	builder := c.Delete().Where(auditlog.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AuditLogDeleteOne{builder}
+}
+
+// Query returns a query builder for AuditLog.
+func (c *AuditLogClient) Query() *AuditLogQuery {
+	return &AuditLogQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAuditLog},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AuditLog entity by its id.
+func (c *AuditLogClient) Get(ctx context.Context, id int) (*AuditLog, error) {
+	return c.Query().Where(auditlog.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AuditLogClient) GetX(ctx context.Context, id int) *AuditLog {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AuditLogClient) Hooks() []Hook {
+	return c.hooks.AuditLog
+}
+
+// Interceptors returns the client interceptors.
+func (c *AuditLogClient) Interceptors() []Interceptor {
+	return c.inters.AuditLog
+}
+
+func (c *AuditLogClient) mutate(ctx context.Context, m *AuditLogMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AuditLogCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AuditLogUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AuditLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AuditLogDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AuditLog mutation op: %q", m.Op())
+	}
+}
+
 // AuthenticationClient is a client for the Authentication schema.
 type AuthenticationClient struct {
 	config
@@ -1411,6 +1562,139 @@ func (c *AuthenticationClient) mutate(ctx context.Context, m *AuthenticationMuta
 		return (&AuthenticationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Authentication mutation op: %q", m.Op())
+	}
+}
+
+// BitlockerKeyClient is a client for the BitlockerKey schema.
+type BitlockerKeyClient struct {
+	config
+}
+
+// NewBitlockerKeyClient returns a client for the BitlockerKey from the given config.
+func NewBitlockerKeyClient(c config) *BitlockerKeyClient {
+	return &BitlockerKeyClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `bitlockerkey.Hooks(f(g(h())))`.
+func (c *BitlockerKeyClient) Use(hooks ...Hook) {
+	c.hooks.BitlockerKey = append(c.hooks.BitlockerKey, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `bitlockerkey.Intercept(f(g(h())))`.
+func (c *BitlockerKeyClient) Intercept(interceptors ...Interceptor) {
+	c.inters.BitlockerKey = append(c.inters.BitlockerKey, interceptors...)
+}
+
+// Create returns a builder for creating a BitlockerKey entity.
+func (c *BitlockerKeyClient) Create() *BitlockerKeyCreate {
+	mutation := newBitlockerKeyMutation(c.config, OpCreate)
+	return &BitlockerKeyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of BitlockerKey entities.
+func (c *BitlockerKeyClient) CreateBulk(builders ...*BitlockerKeyCreate) *BitlockerKeyCreateBulk {
+	return &BitlockerKeyCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *BitlockerKeyClient) MapCreateBulk(slice any, setFunc func(*BitlockerKeyCreate, int)) *BitlockerKeyCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &BitlockerKeyCreateBulk{err: fmt.Errorf("calling to BitlockerKeyClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*BitlockerKeyCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &BitlockerKeyCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for BitlockerKey.
+func (c *BitlockerKeyClient) Update() *BitlockerKeyUpdate {
+	mutation := newBitlockerKeyMutation(c.config, OpUpdate)
+	return &BitlockerKeyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *BitlockerKeyClient) UpdateOne(bk *BitlockerKey) *BitlockerKeyUpdateOne {
+	mutation := newBitlockerKeyMutation(c.config, OpUpdateOne, withBitlockerKey(bk))
+	return &BitlockerKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *BitlockerKeyClient) UpdateOneID(id int) *BitlockerKeyUpdateOne {
+	mutation := newBitlockerKeyMutation(c.config, OpUpdateOne, withBitlockerKeyID(id))
+	return &BitlockerKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for BitlockerKey.
+func (c *BitlockerKeyClient) Delete() *BitlockerKeyDelete {
+	mutation := newBitlockerKeyMutation(c.config, OpDelete)
+	return &BitlockerKeyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *BitlockerKeyClient) DeleteOne(bk *BitlockerKey) *BitlockerKeyDeleteOne {
+	return c.DeleteOneID(bk.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *BitlockerKeyClient) DeleteOneID(id int) *BitlockerKeyDeleteOne {
+	builder := c.Delete().Where(bitlockerkey.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &BitlockerKeyDeleteOne{builder}
+}
+
+// Query returns a query builder for BitlockerKey.
+func (c *BitlockerKeyClient) Query() *BitlockerKeyQuery {
+	return &BitlockerKeyQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeBitlockerKey},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a BitlockerKey entity by its id.
+func (c *BitlockerKeyClient) Get(ctx context.Context, id int) (*BitlockerKey, error) {
+	return c.Query().Where(bitlockerkey.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *BitlockerKeyClient) GetX(ctx context.Context, id int) *BitlockerKey {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *BitlockerKeyClient) Hooks() []Hook {
+	return c.hooks.BitlockerKey
+}
+
+// Interceptors returns the client interceptors.
+func (c *BitlockerKeyClient) Interceptors() []Interceptor {
+	return c.inters.BitlockerKey
+}
+
+func (c *BitlockerKeyClient) mutate(ctx context.Context, m *BitlockerKeyMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&BitlockerKeyCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&BitlockerKeyUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&BitlockerKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&BitlockerKeyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown BitlockerKey mutation op: %q", m.Op())
 	}
 }
 
@@ -6819,19 +7103,19 @@ func (c *WingetConfigExclusionClient) mutate(ctx context.Context, m *WingetConfi
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Agent, Antivirus, App, Authentication, Certificate, Computer, Deployment,
-		LogicalDisk, MemorySlot, Metadata, Monitor, Netbird, NetbirdSettings,
-		NetworkAdapter, OperatingSystem, OrgMetadata, PhysicalDisk, Printer, Profile,
-		ProfileIssue, RecoveryCode, Release, Revocation, Rustdesk, Server, Sessions,
-		Settings, Share, Site, SoftwarePackage, SystemUpdate, Tag, Task, TaskReport,
-		Tenant, Update, User, WingetConfigExclusion []ent.Hook
+		Agent, Antivirus, App, AuditLog, Authentication, BitlockerKey, Certificate,
+		Computer, Deployment, LogicalDisk, MemorySlot, Metadata, Monitor, Netbird,
+		NetbirdSettings, NetworkAdapter, OperatingSystem, OrgMetadata, PhysicalDisk,
+		Printer, Profile, ProfileIssue, RecoveryCode, Release, Revocation, Rustdesk,
+		Server, Sessions, Settings, Share, Site, SoftwarePackage, SystemUpdate, Tag,
+		Task, TaskReport, Tenant, Update, User, WingetConfigExclusion []ent.Hook
 	}
 	inters struct {
-		Agent, Antivirus, App, Authentication, Certificate, Computer, Deployment,
-		LogicalDisk, MemorySlot, Metadata, Monitor, Netbird, NetbirdSettings,
-		NetworkAdapter, OperatingSystem, OrgMetadata, PhysicalDisk, Printer, Profile,
-		ProfileIssue, RecoveryCode, Release, Revocation, Rustdesk, Server, Sessions,
-		Settings, Share, Site, SoftwarePackage, SystemUpdate, Tag, Task, TaskReport,
-		Tenant, Update, User, WingetConfigExclusion []ent.Interceptor
+		Agent, Antivirus, App, AuditLog, Authentication, BitlockerKey, Certificate,
+		Computer, Deployment, LogicalDisk, MemorySlot, Metadata, Monitor, Netbird,
+		NetbirdSettings, NetworkAdapter, OperatingSystem, OrgMetadata, PhysicalDisk,
+		Printer, Profile, ProfileIssue, RecoveryCode, Release, Revocation, Rustdesk,
+		Server, Sessions, Settings, Share, Site, SoftwarePackage, SystemUpdate, Tag,
+		Task, TaskReport, Tenant, Update, User, WingetConfigExclusion []ent.Interceptor
 	}
 )

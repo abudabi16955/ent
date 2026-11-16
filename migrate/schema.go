@@ -109,6 +109,29 @@ var (
 			},
 		},
 	}
+	// AuditLogsColumns holds the columns for the "audit_logs" table.
+	AuditLogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "user_id", Type: field.TypeString},
+		{Name: "agent_id", Type: field.TypeString},
+		{Name: "action", Type: field.TypeString},
+		{Name: "reason", Type: field.TypeString},
+		{Name: "ip_address", Type: field.TypeString},
+		{Name: "created_at", Type: field.TypeTime},
+	}
+	// AuditLogsTable holds the schema information for the "audit_logs" table.
+	AuditLogsTable = &schema.Table{
+		Name:       "audit_logs",
+		Columns:    AuditLogsColumns,
+		PrimaryKey: []*schema.Column{AuditLogsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "auditlog_agent_id",
+				Unique:  false,
+				Columns: []*schema.Column{AuditLogsColumns[2]},
+			},
+		},
+	}
 	// AuthenticationsColumns holds the columns for the "authentications" table.
 	AuthenticationsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -129,6 +152,35 @@ var (
 		Name:       "authentications",
 		Columns:    AuthenticationsColumns,
 		PrimaryKey: []*schema.Column{AuthenticationsColumns[0]},
+	}
+	// BitlockerKeysColumns holds the columns for the "bitlocker_keys" table.
+	BitlockerKeysColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "agent_id", Type: field.TypeString},
+		{Name: "drive_letter", Type: field.TypeString, Default: "C:"},
+		{Name: "key_id", Type: field.TypeString},
+		{Name: "encrypted_password", Type: field.TypeString},
+		{Name: "is_active", Type: field.TypeBool, Default: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+	}
+	// BitlockerKeysTable holds the schema information for the "bitlocker_keys" table.
+	BitlockerKeysTable = &schema.Table{
+		Name:       "bitlocker_keys",
+		Columns:    BitlockerKeysColumns,
+		PrimaryKey: []*schema.Column{BitlockerKeysColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "bitlockerkey_agent_id",
+				Unique:  false,
+				Columns: []*schema.Column{BitlockerKeysColumns[1]},
+			},
+			{
+				Name:    "bitlockerkey_key_id",
+				Unique:  false,
+				Columns: []*schema.Column{BitlockerKeysColumns[3]},
+			},
+		},
 	}
 	// CertificatesColumns holds the columns for the "certificates" table.
 	CertificatesColumns = []*schema.Column{
@@ -1257,7 +1309,9 @@ var (
 		AgentsTable,
 		AntiviriTable,
 		AppsTable,
+		AuditLogsTable,
 		AuthenticationsTable,
+		BitlockerKeysTable,
 		CertificatesTable,
 		ComputersTable,
 		DeploymentsTable,
