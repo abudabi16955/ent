@@ -658,6 +658,31 @@ var (
 		Columns:    RustdesksColumns,
 		PrimaryKey: []*schema.Column{RustdesksColumns[0]},
 	}
+	// SelfServicePackagesColumns holds the columns for the "self_service_packages" table.
+	SelfServicePackagesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUUID},
+		{Name: "name", Type: field.TypeString},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "category", Type: field.TypeString, Nullable: true, Default: "General"},
+		{Name: "version", Type: field.TypeString, Nullable: true},
+		{Name: "package_type", Type: field.TypeEnum, Enums: []string{"msi", "exe", "zip", "winget"}},
+		{Name: "source_type", Type: field.TypeEnum, Enums: []string{"upload", "https"}},
+		{Name: "source_url", Type: field.TypeString, Nullable: true},
+		{Name: "file_path", Type: field.TypeString, Nullable: true},
+		{Name: "checksum_sha256", Type: field.TypeString, Nullable: true},
+		{Name: "execution_context", Type: field.TypeEnum, Enums: []string{"system", "user"}},
+		{Name: "silent_args", Type: field.TypeString, Nullable: true},
+		{Name: "icon", Type: field.TypeString, Nullable: true},
+		{Name: "enabled", Type: field.TypeBool, Default: true},
+		{Name: "created_at", Type: field.TypeTime},
+		{Name: "updated_at", Type: field.TypeTime},
+	}
+	// SelfServicePackagesTable holds the schema information for the "self_service_packages" table.
+	SelfServicePackagesTable = &schema.Table{
+		Name:       "self_service_packages",
+		Columns:    SelfServicePackagesColumns,
+		PrimaryKey: []*schema.Column{SelfServicePackagesColumns[0]},
+	}
 	// ServersColumns holds the columns for the "servers" table.
 	ServersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -1332,6 +1357,7 @@ var (
 		ReleasesTable,
 		RevocationsTable,
 		RustdesksTable,
+		SelfServicePackagesTable,
 		ServersTable,
 		SessionsTable,
 		SettingsTable,

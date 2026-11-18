@@ -42,6 +42,7 @@ import (
 	"github.com/open-uem/ent/release"
 	"github.com/open-uem/ent/revocation"
 	"github.com/open-uem/ent/rustdesk"
+	"github.com/open-uem/ent/selfservicepackage"
 	"github.com/open-uem/ent/server"
 	"github.com/open-uem/ent/sessions"
 	"github.com/open-uem/ent/settings"
@@ -115,6 +116,8 @@ type Client struct {
 	Revocation *RevocationClient
 	// Rustdesk is the client for interacting with the Rustdesk builders.
 	Rustdesk *RustdeskClient
+	// SelfServicePackage is the client for interacting with the SelfServicePackage builders.
+	SelfServicePackage *SelfServicePackageClient
 	// Server is the client for interacting with the Server builders.
 	Server *ServerClient
 	// Sessions is the client for interacting with the Sessions builders.
@@ -180,6 +183,7 @@ func (c *Client) init() {
 	c.Release = NewReleaseClient(c.config)
 	c.Revocation = NewRevocationClient(c.config)
 	c.Rustdesk = NewRustdeskClient(c.config)
+	c.SelfServicePackage = NewSelfServicePackageClient(c.config)
 	c.Server = NewServerClient(c.config)
 	c.Sessions = NewSessionsClient(c.config)
 	c.Settings = NewSettingsClient(c.config)
@@ -312,6 +316,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Release:               NewReleaseClient(cfg),
 		Revocation:            NewRevocationClient(cfg),
 		Rustdesk:              NewRustdeskClient(cfg),
+		SelfServicePackage:    NewSelfServicePackageClient(cfg),
 		Server:                NewServerClient(cfg),
 		Sessions:              NewSessionsClient(cfg),
 		Settings:              NewSettingsClient(cfg),
@@ -371,6 +376,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Release:               NewReleaseClient(cfg),
 		Revocation:            NewRevocationClient(cfg),
 		Rustdesk:              NewRustdeskClient(cfg),
+		SelfServicePackage:    NewSelfServicePackageClient(cfg),
 		Server:                NewServerClient(cfg),
 		Sessions:              NewSessionsClient(cfg),
 		Settings:              NewSettingsClient(cfg),
@@ -418,10 +424,10 @@ func (c *Client) Use(hooks ...Hook) {
 		c.Certificate, c.Computer, c.Deployment, c.LogicalDisk, c.MemorySlot,
 		c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings, c.NetworkAdapter,
 		c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile,
-		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server,
-		c.Sessions, c.Settings, c.Share, c.Site, c.SoftwarePackage, c.SystemUpdate,
-		c.Tag, c.Task, c.TaskReport, c.Tenant, c.Update, c.User,
-		c.WingetConfigExclusion,
+		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk,
+		c.SelfServicePackage, c.Server, c.Sessions, c.Settings, c.Share, c.Site,
+		c.SoftwarePackage, c.SystemUpdate, c.Tag, c.Task, c.TaskReport, c.Tenant,
+		c.Update, c.User, c.WingetConfigExclusion,
 	} {
 		n.Use(hooks...)
 	}
@@ -435,10 +441,10 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.Certificate, c.Computer, c.Deployment, c.LogicalDisk, c.MemorySlot,
 		c.Metadata, c.Monitor, c.Netbird, c.NetbirdSettings, c.NetworkAdapter,
 		c.OperatingSystem, c.OrgMetadata, c.PhysicalDisk, c.Printer, c.Profile,
-		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk, c.Server,
-		c.Sessions, c.Settings, c.Share, c.Site, c.SoftwarePackage, c.SystemUpdate,
-		c.Tag, c.Task, c.TaskReport, c.Tenant, c.Update, c.User,
-		c.WingetConfigExclusion,
+		c.ProfileIssue, c.RecoveryCode, c.Release, c.Revocation, c.Rustdesk,
+		c.SelfServicePackage, c.Server, c.Sessions, c.Settings, c.Share, c.Site,
+		c.SoftwarePackage, c.SystemUpdate, c.Tag, c.Task, c.TaskReport, c.Tenant,
+		c.Update, c.User, c.WingetConfigExclusion,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -499,6 +505,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Revocation.mutate(ctx, m)
 	case *RustdeskMutation:
 		return c.Rustdesk.mutate(ctx, m)
+	case *SelfServicePackageMutation:
+		return c.SelfServicePackage.mutate(ctx, m)
 	case *ServerMutation:
 		return c.Server.mutate(ctx, m)
 	case *SessionsMutation:
@@ -4774,6 +4782,139 @@ func (c *RustdeskClient) mutate(ctx context.Context, m *RustdeskMutation) (Value
 	}
 }
 
+// SelfServicePackageClient is a client for the SelfServicePackage schema.
+type SelfServicePackageClient struct {
+	config
+}
+
+// NewSelfServicePackageClient returns a client for the SelfServicePackage from the given config.
+func NewSelfServicePackageClient(c config) *SelfServicePackageClient {
+	return &SelfServicePackageClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `selfservicepackage.Hooks(f(g(h())))`.
+func (c *SelfServicePackageClient) Use(hooks ...Hook) {
+	c.hooks.SelfServicePackage = append(c.hooks.SelfServicePackage, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `selfservicepackage.Intercept(f(g(h())))`.
+func (c *SelfServicePackageClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SelfServicePackage = append(c.inters.SelfServicePackage, interceptors...)
+}
+
+// Create returns a builder for creating a SelfServicePackage entity.
+func (c *SelfServicePackageClient) Create() *SelfServicePackageCreate {
+	mutation := newSelfServicePackageMutation(c.config, OpCreate)
+	return &SelfServicePackageCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SelfServicePackage entities.
+func (c *SelfServicePackageClient) CreateBulk(builders ...*SelfServicePackageCreate) *SelfServicePackageCreateBulk {
+	return &SelfServicePackageCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SelfServicePackageClient) MapCreateBulk(slice any, setFunc func(*SelfServicePackageCreate, int)) *SelfServicePackageCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SelfServicePackageCreateBulk{err: fmt.Errorf("calling to SelfServicePackageClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SelfServicePackageCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SelfServicePackageCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SelfServicePackage.
+func (c *SelfServicePackageClient) Update() *SelfServicePackageUpdate {
+	mutation := newSelfServicePackageMutation(c.config, OpUpdate)
+	return &SelfServicePackageUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SelfServicePackageClient) UpdateOne(ssp *SelfServicePackage) *SelfServicePackageUpdateOne {
+	mutation := newSelfServicePackageMutation(c.config, OpUpdateOne, withSelfServicePackage(ssp))
+	return &SelfServicePackageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SelfServicePackageClient) UpdateOneID(id uuid.UUID) *SelfServicePackageUpdateOne {
+	mutation := newSelfServicePackageMutation(c.config, OpUpdateOne, withSelfServicePackageID(id))
+	return &SelfServicePackageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SelfServicePackage.
+func (c *SelfServicePackageClient) Delete() *SelfServicePackageDelete {
+	mutation := newSelfServicePackageMutation(c.config, OpDelete)
+	return &SelfServicePackageDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SelfServicePackageClient) DeleteOne(ssp *SelfServicePackage) *SelfServicePackageDeleteOne {
+	return c.DeleteOneID(ssp.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SelfServicePackageClient) DeleteOneID(id uuid.UUID) *SelfServicePackageDeleteOne {
+	builder := c.Delete().Where(selfservicepackage.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SelfServicePackageDeleteOne{builder}
+}
+
+// Query returns a query builder for SelfServicePackage.
+func (c *SelfServicePackageClient) Query() *SelfServicePackageQuery {
+	return &SelfServicePackageQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSelfServicePackage},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SelfServicePackage entity by its id.
+func (c *SelfServicePackageClient) Get(ctx context.Context, id uuid.UUID) (*SelfServicePackage, error) {
+	return c.Query().Where(selfservicepackage.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SelfServicePackageClient) GetX(ctx context.Context, id uuid.UUID) *SelfServicePackage {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SelfServicePackageClient) Hooks() []Hook {
+	return c.hooks.SelfServicePackage
+}
+
+// Interceptors returns the client interceptors.
+func (c *SelfServicePackageClient) Interceptors() []Interceptor {
+	return c.inters.SelfServicePackage
+}
+
+func (c *SelfServicePackageClient) mutate(ctx context.Context, m *SelfServicePackageMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SelfServicePackageCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SelfServicePackageUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SelfServicePackageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SelfServicePackageDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SelfServicePackage mutation op: %q", m.Op())
+	}
+}
+
 // ServerClient is a client for the Server schema.
 type ServerClient struct {
 	config
@@ -7107,15 +7248,17 @@ type (
 		Computer, Deployment, LogicalDisk, MemorySlot, Metadata, Monitor, Netbird,
 		NetbirdSettings, NetworkAdapter, OperatingSystem, OrgMetadata, PhysicalDisk,
 		Printer, Profile, ProfileIssue, RecoveryCode, Release, Revocation, Rustdesk,
-		Server, Sessions, Settings, Share, Site, SoftwarePackage, SystemUpdate, Tag,
-		Task, TaskReport, Tenant, Update, User, WingetConfigExclusion []ent.Hook
+		SelfServicePackage, Server, Sessions, Settings, Share, Site, SoftwarePackage,
+		SystemUpdate, Tag, Task, TaskReport, Tenant, Update, User,
+		WingetConfigExclusion []ent.Hook
 	}
 	inters struct {
 		Agent, Antivirus, App, AuditLog, Authentication, BitlockerKey, Certificate,
 		Computer, Deployment, LogicalDisk, MemorySlot, Metadata, Monitor, Netbird,
 		NetbirdSettings, NetworkAdapter, OperatingSystem, OrgMetadata, PhysicalDisk,
 		Printer, Profile, ProfileIssue, RecoveryCode, Release, Revocation, Rustdesk,
-		Server, Sessions, Settings, Share, Site, SoftwarePackage, SystemUpdate, Tag,
-		Task, TaskReport, Tenant, Update, User, WingetConfigExclusion []ent.Interceptor
+		SelfServicePackage, Server, Sessions, Settings, Share, Site, SoftwarePackage,
+		SystemUpdate, Tag, Task, TaskReport, Tenant, Update, User,
+		WingetConfigExclusion []ent.Interceptor
 	}
 )
