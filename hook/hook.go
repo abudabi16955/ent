@@ -321,6 +321,18 @@ func (f RustdeskFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RustdeskMutation", m)
 }
 
+// The SelfServicePackageFunc type is an adapter to allow the use of ordinary
+// function as SelfServicePackage mutator.
+type SelfServicePackageFunc func(context.Context, *ent.SelfServicePackageMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SelfServicePackageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SelfServicePackageMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SelfServicePackageMutation", m)
+}
+
 // The ServerFunc type is an adapter to allow the use of ordinary
 // function as Server mutator.
 type ServerFunc func(context.Context, *ent.ServerMutation) (ent.Value, error)

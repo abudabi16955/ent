@@ -39,6 +39,7 @@ import (
 	"github.com/open-uem/ent/release"
 	"github.com/open-uem/ent/revocation"
 	"github.com/open-uem/ent/rustdesk"
+	"github.com/open-uem/ent/selfservicepackage"
 	"github.com/open-uem/ent/server"
 	"github.com/open-uem/ent/sessions"
 	"github.com/open-uem/ent/settings"
@@ -90,6 +91,7 @@ const (
 	TypeRelease               = "Release"
 	TypeRevocation            = "Revocation"
 	TypeRustdesk              = "Rustdesk"
+	TypeSelfServicePackage    = "SelfServicePackage"
 	TypeServer                = "Server"
 	TypeSessions              = "Sessions"
 	TypeSettings              = "Settings"
@@ -23572,6 +23574,1249 @@ func (m *RustdeskMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown Rustdesk edge %s", name)
+}
+
+// SelfServicePackageMutation represents an operation that mutates the SelfServicePackage nodes in the graph.
+type SelfServicePackageMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *uuid.UUID
+	name              *string
+	description       *string
+	category          *string
+	version           *string
+	package_type      *selfservicepackage.PackageType
+	source_type       *selfservicepackage.SourceType
+	source_url        *string
+	file_path         *string
+	checksum_sha256   *string
+	execution_context *selfservicepackage.ExecutionContext
+	silent_args       *string
+	icon              *string
+	enabled           *bool
+	created_at        *time.Time
+	updated_at        *time.Time
+	clearedFields     map[string]struct{}
+	done              bool
+	oldValue          func(context.Context) (*SelfServicePackage, error)
+	predicates        []predicate.SelfServicePackage
+}
+
+var _ ent.Mutation = (*SelfServicePackageMutation)(nil)
+
+// selfservicepackageOption allows management of the mutation configuration using functional options.
+type selfservicepackageOption func(*SelfServicePackageMutation)
+
+// newSelfServicePackageMutation creates new mutation for the SelfServicePackage entity.
+func newSelfServicePackageMutation(c config, op Op, opts ...selfservicepackageOption) *SelfServicePackageMutation {
+	m := &SelfServicePackageMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSelfServicePackage,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSelfServicePackageID sets the ID field of the mutation.
+func withSelfServicePackageID(id uuid.UUID) selfservicepackageOption {
+	return func(m *SelfServicePackageMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *SelfServicePackage
+		)
+		m.oldValue = func(ctx context.Context) (*SelfServicePackage, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().SelfServicePackage.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSelfServicePackage sets the old SelfServicePackage of the mutation.
+func withSelfServicePackage(node *SelfServicePackage) selfservicepackageOption {
+	return func(m *SelfServicePackageMutation) {
+		m.oldValue = func(context.Context) (*SelfServicePackage, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SelfServicePackageMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SelfServicePackageMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of SelfServicePackage entities.
+func (m *SelfServicePackageMutation) SetID(id uuid.UUID) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SelfServicePackageMutation) ID() (id uuid.UUID, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *SelfServicePackageMutation) IDs(ctx context.Context) ([]uuid.UUID, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uuid.UUID{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().SelfServicePackage.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetName sets the "name" field.
+func (m *SelfServicePackageMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *SelfServicePackageMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the SelfServicePackage entity.
+// If the SelfServicePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SelfServicePackageMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *SelfServicePackageMutation) ResetName() {
+	m.name = nil
+}
+
+// SetDescription sets the "description" field.
+func (m *SelfServicePackageMutation) SetDescription(s string) {
+	m.description = &s
+}
+
+// Description returns the value of the "description" field in the mutation.
+func (m *SelfServicePackageMutation) Description() (r string, exists bool) {
+	v := m.description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDescription returns the old "description" field's value of the SelfServicePackage entity.
+// If the SelfServicePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SelfServicePackageMutation) OldDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDescription: %w", err)
+	}
+	return oldValue.Description, nil
+}
+
+// ClearDescription clears the value of the "description" field.
+func (m *SelfServicePackageMutation) ClearDescription() {
+	m.description = nil
+	m.clearedFields[selfservicepackage.FieldDescription] = struct{}{}
+}
+
+// DescriptionCleared returns if the "description" field was cleared in this mutation.
+func (m *SelfServicePackageMutation) DescriptionCleared() bool {
+	_, ok := m.clearedFields[selfservicepackage.FieldDescription]
+	return ok
+}
+
+// ResetDescription resets all changes to the "description" field.
+func (m *SelfServicePackageMutation) ResetDescription() {
+	m.description = nil
+	delete(m.clearedFields, selfservicepackage.FieldDescription)
+}
+
+// SetCategory sets the "category" field.
+func (m *SelfServicePackageMutation) SetCategory(s string) {
+	m.category = &s
+}
+
+// Category returns the value of the "category" field in the mutation.
+func (m *SelfServicePackageMutation) Category() (r string, exists bool) {
+	v := m.category
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCategory returns the old "category" field's value of the SelfServicePackage entity.
+// If the SelfServicePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SelfServicePackageMutation) OldCategory(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCategory is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCategory requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCategory: %w", err)
+	}
+	return oldValue.Category, nil
+}
+
+// ClearCategory clears the value of the "category" field.
+func (m *SelfServicePackageMutation) ClearCategory() {
+	m.category = nil
+	m.clearedFields[selfservicepackage.FieldCategory] = struct{}{}
+}
+
+// CategoryCleared returns if the "category" field was cleared in this mutation.
+func (m *SelfServicePackageMutation) CategoryCleared() bool {
+	_, ok := m.clearedFields[selfservicepackage.FieldCategory]
+	return ok
+}
+
+// ResetCategory resets all changes to the "category" field.
+func (m *SelfServicePackageMutation) ResetCategory() {
+	m.category = nil
+	delete(m.clearedFields, selfservicepackage.FieldCategory)
+}
+
+// SetVersion sets the "version" field.
+func (m *SelfServicePackageMutation) SetVersion(s string) {
+	m.version = &s
+}
+
+// Version returns the value of the "version" field in the mutation.
+func (m *SelfServicePackageMutation) Version() (r string, exists bool) {
+	v := m.version
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVersion returns the old "version" field's value of the SelfServicePackage entity.
+// If the SelfServicePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SelfServicePackageMutation) OldVersion(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVersion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVersion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVersion: %w", err)
+	}
+	return oldValue.Version, nil
+}
+
+// ClearVersion clears the value of the "version" field.
+func (m *SelfServicePackageMutation) ClearVersion() {
+	m.version = nil
+	m.clearedFields[selfservicepackage.FieldVersion] = struct{}{}
+}
+
+// VersionCleared returns if the "version" field was cleared in this mutation.
+func (m *SelfServicePackageMutation) VersionCleared() bool {
+	_, ok := m.clearedFields[selfservicepackage.FieldVersion]
+	return ok
+}
+
+// ResetVersion resets all changes to the "version" field.
+func (m *SelfServicePackageMutation) ResetVersion() {
+	m.version = nil
+	delete(m.clearedFields, selfservicepackage.FieldVersion)
+}
+
+// SetPackageType sets the "package_type" field.
+func (m *SelfServicePackageMutation) SetPackageType(st selfservicepackage.PackageType) {
+	m.package_type = &st
+}
+
+// PackageType returns the value of the "package_type" field in the mutation.
+func (m *SelfServicePackageMutation) PackageType() (r selfservicepackage.PackageType, exists bool) {
+	v := m.package_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPackageType returns the old "package_type" field's value of the SelfServicePackage entity.
+// If the SelfServicePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SelfServicePackageMutation) OldPackageType(ctx context.Context) (v selfservicepackage.PackageType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPackageType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPackageType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPackageType: %w", err)
+	}
+	return oldValue.PackageType, nil
+}
+
+// ResetPackageType resets all changes to the "package_type" field.
+func (m *SelfServicePackageMutation) ResetPackageType() {
+	m.package_type = nil
+}
+
+// SetSourceType sets the "source_type" field.
+func (m *SelfServicePackageMutation) SetSourceType(st selfservicepackage.SourceType) {
+	m.source_type = &st
+}
+
+// SourceType returns the value of the "source_type" field in the mutation.
+func (m *SelfServicePackageMutation) SourceType() (r selfservicepackage.SourceType, exists bool) {
+	v := m.source_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSourceType returns the old "source_type" field's value of the SelfServicePackage entity.
+// If the SelfServicePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SelfServicePackageMutation) OldSourceType(ctx context.Context) (v selfservicepackage.SourceType, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSourceType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSourceType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSourceType: %w", err)
+	}
+	return oldValue.SourceType, nil
+}
+
+// ResetSourceType resets all changes to the "source_type" field.
+func (m *SelfServicePackageMutation) ResetSourceType() {
+	m.source_type = nil
+}
+
+// SetSourceURL sets the "source_url" field.
+func (m *SelfServicePackageMutation) SetSourceURL(s string) {
+	m.source_url = &s
+}
+
+// SourceURL returns the value of the "source_url" field in the mutation.
+func (m *SelfServicePackageMutation) SourceURL() (r string, exists bool) {
+	v := m.source_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSourceURL returns the old "source_url" field's value of the SelfServicePackage entity.
+// If the SelfServicePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SelfServicePackageMutation) OldSourceURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSourceURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSourceURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSourceURL: %w", err)
+	}
+	return oldValue.SourceURL, nil
+}
+
+// ClearSourceURL clears the value of the "source_url" field.
+func (m *SelfServicePackageMutation) ClearSourceURL() {
+	m.source_url = nil
+	m.clearedFields[selfservicepackage.FieldSourceURL] = struct{}{}
+}
+
+// SourceURLCleared returns if the "source_url" field was cleared in this mutation.
+func (m *SelfServicePackageMutation) SourceURLCleared() bool {
+	_, ok := m.clearedFields[selfservicepackage.FieldSourceURL]
+	return ok
+}
+
+// ResetSourceURL resets all changes to the "source_url" field.
+func (m *SelfServicePackageMutation) ResetSourceURL() {
+	m.source_url = nil
+	delete(m.clearedFields, selfservicepackage.FieldSourceURL)
+}
+
+// SetFilePath sets the "file_path" field.
+func (m *SelfServicePackageMutation) SetFilePath(s string) {
+	m.file_path = &s
+}
+
+// FilePath returns the value of the "file_path" field in the mutation.
+func (m *SelfServicePackageMutation) FilePath() (r string, exists bool) {
+	v := m.file_path
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFilePath returns the old "file_path" field's value of the SelfServicePackage entity.
+// If the SelfServicePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SelfServicePackageMutation) OldFilePath(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFilePath is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFilePath requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFilePath: %w", err)
+	}
+	return oldValue.FilePath, nil
+}
+
+// ClearFilePath clears the value of the "file_path" field.
+func (m *SelfServicePackageMutation) ClearFilePath() {
+	m.file_path = nil
+	m.clearedFields[selfservicepackage.FieldFilePath] = struct{}{}
+}
+
+// FilePathCleared returns if the "file_path" field was cleared in this mutation.
+func (m *SelfServicePackageMutation) FilePathCleared() bool {
+	_, ok := m.clearedFields[selfservicepackage.FieldFilePath]
+	return ok
+}
+
+// ResetFilePath resets all changes to the "file_path" field.
+func (m *SelfServicePackageMutation) ResetFilePath() {
+	m.file_path = nil
+	delete(m.clearedFields, selfservicepackage.FieldFilePath)
+}
+
+// SetChecksumSha256 sets the "checksum_sha256" field.
+func (m *SelfServicePackageMutation) SetChecksumSha256(s string) {
+	m.checksum_sha256 = &s
+}
+
+// ChecksumSha256 returns the value of the "checksum_sha256" field in the mutation.
+func (m *SelfServicePackageMutation) ChecksumSha256() (r string, exists bool) {
+	v := m.checksum_sha256
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChecksumSha256 returns the old "checksum_sha256" field's value of the SelfServicePackage entity.
+// If the SelfServicePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SelfServicePackageMutation) OldChecksumSha256(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChecksumSha256 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChecksumSha256 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChecksumSha256: %w", err)
+	}
+	return oldValue.ChecksumSha256, nil
+}
+
+// ClearChecksumSha256 clears the value of the "checksum_sha256" field.
+func (m *SelfServicePackageMutation) ClearChecksumSha256() {
+	m.checksum_sha256 = nil
+	m.clearedFields[selfservicepackage.FieldChecksumSha256] = struct{}{}
+}
+
+// ChecksumSha256Cleared returns if the "checksum_sha256" field was cleared in this mutation.
+func (m *SelfServicePackageMutation) ChecksumSha256Cleared() bool {
+	_, ok := m.clearedFields[selfservicepackage.FieldChecksumSha256]
+	return ok
+}
+
+// ResetChecksumSha256 resets all changes to the "checksum_sha256" field.
+func (m *SelfServicePackageMutation) ResetChecksumSha256() {
+	m.checksum_sha256 = nil
+	delete(m.clearedFields, selfservicepackage.FieldChecksumSha256)
+}
+
+// SetExecutionContext sets the "execution_context" field.
+func (m *SelfServicePackageMutation) SetExecutionContext(sc selfservicepackage.ExecutionContext) {
+	m.execution_context = &sc
+}
+
+// ExecutionContext returns the value of the "execution_context" field in the mutation.
+func (m *SelfServicePackageMutation) ExecutionContext() (r selfservicepackage.ExecutionContext, exists bool) {
+	v := m.execution_context
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExecutionContext returns the old "execution_context" field's value of the SelfServicePackage entity.
+// If the SelfServicePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SelfServicePackageMutation) OldExecutionContext(ctx context.Context) (v selfservicepackage.ExecutionContext, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExecutionContext is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExecutionContext requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExecutionContext: %w", err)
+	}
+	return oldValue.ExecutionContext, nil
+}
+
+// ResetExecutionContext resets all changes to the "execution_context" field.
+func (m *SelfServicePackageMutation) ResetExecutionContext() {
+	m.execution_context = nil
+}
+
+// SetSilentArgs sets the "silent_args" field.
+func (m *SelfServicePackageMutation) SetSilentArgs(s string) {
+	m.silent_args = &s
+}
+
+// SilentArgs returns the value of the "silent_args" field in the mutation.
+func (m *SelfServicePackageMutation) SilentArgs() (r string, exists bool) {
+	v := m.silent_args
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSilentArgs returns the old "silent_args" field's value of the SelfServicePackage entity.
+// If the SelfServicePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SelfServicePackageMutation) OldSilentArgs(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSilentArgs is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSilentArgs requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSilentArgs: %w", err)
+	}
+	return oldValue.SilentArgs, nil
+}
+
+// ClearSilentArgs clears the value of the "silent_args" field.
+func (m *SelfServicePackageMutation) ClearSilentArgs() {
+	m.silent_args = nil
+	m.clearedFields[selfservicepackage.FieldSilentArgs] = struct{}{}
+}
+
+// SilentArgsCleared returns if the "silent_args" field was cleared in this mutation.
+func (m *SelfServicePackageMutation) SilentArgsCleared() bool {
+	_, ok := m.clearedFields[selfservicepackage.FieldSilentArgs]
+	return ok
+}
+
+// ResetSilentArgs resets all changes to the "silent_args" field.
+func (m *SelfServicePackageMutation) ResetSilentArgs() {
+	m.silent_args = nil
+	delete(m.clearedFields, selfservicepackage.FieldSilentArgs)
+}
+
+// SetIcon sets the "icon" field.
+func (m *SelfServicePackageMutation) SetIcon(s string) {
+	m.icon = &s
+}
+
+// Icon returns the value of the "icon" field in the mutation.
+func (m *SelfServicePackageMutation) Icon() (r string, exists bool) {
+	v := m.icon
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIcon returns the old "icon" field's value of the SelfServicePackage entity.
+// If the SelfServicePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SelfServicePackageMutation) OldIcon(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIcon is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIcon requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIcon: %w", err)
+	}
+	return oldValue.Icon, nil
+}
+
+// ClearIcon clears the value of the "icon" field.
+func (m *SelfServicePackageMutation) ClearIcon() {
+	m.icon = nil
+	m.clearedFields[selfservicepackage.FieldIcon] = struct{}{}
+}
+
+// IconCleared returns if the "icon" field was cleared in this mutation.
+func (m *SelfServicePackageMutation) IconCleared() bool {
+	_, ok := m.clearedFields[selfservicepackage.FieldIcon]
+	return ok
+}
+
+// ResetIcon resets all changes to the "icon" field.
+func (m *SelfServicePackageMutation) ResetIcon() {
+	m.icon = nil
+	delete(m.clearedFields, selfservicepackage.FieldIcon)
+}
+
+// SetEnabled sets the "enabled" field.
+func (m *SelfServicePackageMutation) SetEnabled(b bool) {
+	m.enabled = &b
+}
+
+// Enabled returns the value of the "enabled" field in the mutation.
+func (m *SelfServicePackageMutation) Enabled() (r bool, exists bool) {
+	v := m.enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnabled returns the old "enabled" field's value of the SelfServicePackage entity.
+// If the SelfServicePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SelfServicePackageMutation) OldEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnabled: %w", err)
+	}
+	return oldValue.Enabled, nil
+}
+
+// ResetEnabled resets all changes to the "enabled" field.
+func (m *SelfServicePackageMutation) ResetEnabled() {
+	m.enabled = nil
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *SelfServicePackageMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *SelfServicePackageMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the SelfServicePackage entity.
+// If the SelfServicePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SelfServicePackageMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *SelfServicePackageMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *SelfServicePackageMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *SelfServicePackageMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the SelfServicePackage entity.
+// If the SelfServicePackage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SelfServicePackageMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *SelfServicePackageMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// Where appends a list predicates to the SelfServicePackageMutation builder.
+func (m *SelfServicePackageMutation) Where(ps ...predicate.SelfServicePackage) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the SelfServicePackageMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *SelfServicePackageMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.SelfServicePackage, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *SelfServicePackageMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *SelfServicePackageMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (SelfServicePackage).
+func (m *SelfServicePackageMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SelfServicePackageMutation) Fields() []string {
+	fields := make([]string, 0, 15)
+	if m.name != nil {
+		fields = append(fields, selfservicepackage.FieldName)
+	}
+	if m.description != nil {
+		fields = append(fields, selfservicepackage.FieldDescription)
+	}
+	if m.category != nil {
+		fields = append(fields, selfservicepackage.FieldCategory)
+	}
+	if m.version != nil {
+		fields = append(fields, selfservicepackage.FieldVersion)
+	}
+	if m.package_type != nil {
+		fields = append(fields, selfservicepackage.FieldPackageType)
+	}
+	if m.source_type != nil {
+		fields = append(fields, selfservicepackage.FieldSourceType)
+	}
+	if m.source_url != nil {
+		fields = append(fields, selfservicepackage.FieldSourceURL)
+	}
+	if m.file_path != nil {
+		fields = append(fields, selfservicepackage.FieldFilePath)
+	}
+	if m.checksum_sha256 != nil {
+		fields = append(fields, selfservicepackage.FieldChecksumSha256)
+	}
+	if m.execution_context != nil {
+		fields = append(fields, selfservicepackage.FieldExecutionContext)
+	}
+	if m.silent_args != nil {
+		fields = append(fields, selfservicepackage.FieldSilentArgs)
+	}
+	if m.icon != nil {
+		fields = append(fields, selfservicepackage.FieldIcon)
+	}
+	if m.enabled != nil {
+		fields = append(fields, selfservicepackage.FieldEnabled)
+	}
+	if m.created_at != nil {
+		fields = append(fields, selfservicepackage.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, selfservicepackage.FieldUpdatedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SelfServicePackageMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case selfservicepackage.FieldName:
+		return m.Name()
+	case selfservicepackage.FieldDescription:
+		return m.Description()
+	case selfservicepackage.FieldCategory:
+		return m.Category()
+	case selfservicepackage.FieldVersion:
+		return m.Version()
+	case selfservicepackage.FieldPackageType:
+		return m.PackageType()
+	case selfservicepackage.FieldSourceType:
+		return m.SourceType()
+	case selfservicepackage.FieldSourceURL:
+		return m.SourceURL()
+	case selfservicepackage.FieldFilePath:
+		return m.FilePath()
+	case selfservicepackage.FieldChecksumSha256:
+		return m.ChecksumSha256()
+	case selfservicepackage.FieldExecutionContext:
+		return m.ExecutionContext()
+	case selfservicepackage.FieldSilentArgs:
+		return m.SilentArgs()
+	case selfservicepackage.FieldIcon:
+		return m.Icon()
+	case selfservicepackage.FieldEnabled:
+		return m.Enabled()
+	case selfservicepackage.FieldCreatedAt:
+		return m.CreatedAt()
+	case selfservicepackage.FieldUpdatedAt:
+		return m.UpdatedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SelfServicePackageMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case selfservicepackage.FieldName:
+		return m.OldName(ctx)
+	case selfservicepackage.FieldDescription:
+		return m.OldDescription(ctx)
+	case selfservicepackage.FieldCategory:
+		return m.OldCategory(ctx)
+	case selfservicepackage.FieldVersion:
+		return m.OldVersion(ctx)
+	case selfservicepackage.FieldPackageType:
+		return m.OldPackageType(ctx)
+	case selfservicepackage.FieldSourceType:
+		return m.OldSourceType(ctx)
+	case selfservicepackage.FieldSourceURL:
+		return m.OldSourceURL(ctx)
+	case selfservicepackage.FieldFilePath:
+		return m.OldFilePath(ctx)
+	case selfservicepackage.FieldChecksumSha256:
+		return m.OldChecksumSha256(ctx)
+	case selfservicepackage.FieldExecutionContext:
+		return m.OldExecutionContext(ctx)
+	case selfservicepackage.FieldSilentArgs:
+		return m.OldSilentArgs(ctx)
+	case selfservicepackage.FieldIcon:
+		return m.OldIcon(ctx)
+	case selfservicepackage.FieldEnabled:
+		return m.OldEnabled(ctx)
+	case selfservicepackage.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case selfservicepackage.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown SelfServicePackage field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SelfServicePackageMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case selfservicepackage.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case selfservicepackage.FieldDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDescription(v)
+		return nil
+	case selfservicepackage.FieldCategory:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCategory(v)
+		return nil
+	case selfservicepackage.FieldVersion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVersion(v)
+		return nil
+	case selfservicepackage.FieldPackageType:
+		v, ok := value.(selfservicepackage.PackageType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPackageType(v)
+		return nil
+	case selfservicepackage.FieldSourceType:
+		v, ok := value.(selfservicepackage.SourceType)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSourceType(v)
+		return nil
+	case selfservicepackage.FieldSourceURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSourceURL(v)
+		return nil
+	case selfservicepackage.FieldFilePath:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFilePath(v)
+		return nil
+	case selfservicepackage.FieldChecksumSha256:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChecksumSha256(v)
+		return nil
+	case selfservicepackage.FieldExecutionContext:
+		v, ok := value.(selfservicepackage.ExecutionContext)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExecutionContext(v)
+		return nil
+	case selfservicepackage.FieldSilentArgs:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSilentArgs(v)
+		return nil
+	case selfservicepackage.FieldIcon:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIcon(v)
+		return nil
+	case selfservicepackage.FieldEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnabled(v)
+		return nil
+	case selfservicepackage.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case selfservicepackage.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SelfServicePackage field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SelfServicePackageMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SelfServicePackageMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SelfServicePackageMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown SelfServicePackage numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SelfServicePackageMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(selfservicepackage.FieldDescription) {
+		fields = append(fields, selfservicepackage.FieldDescription)
+	}
+	if m.FieldCleared(selfservicepackage.FieldCategory) {
+		fields = append(fields, selfservicepackage.FieldCategory)
+	}
+	if m.FieldCleared(selfservicepackage.FieldVersion) {
+		fields = append(fields, selfservicepackage.FieldVersion)
+	}
+	if m.FieldCleared(selfservicepackage.FieldSourceURL) {
+		fields = append(fields, selfservicepackage.FieldSourceURL)
+	}
+	if m.FieldCleared(selfservicepackage.FieldFilePath) {
+		fields = append(fields, selfservicepackage.FieldFilePath)
+	}
+	if m.FieldCleared(selfservicepackage.FieldChecksumSha256) {
+		fields = append(fields, selfservicepackage.FieldChecksumSha256)
+	}
+	if m.FieldCleared(selfservicepackage.FieldSilentArgs) {
+		fields = append(fields, selfservicepackage.FieldSilentArgs)
+	}
+	if m.FieldCleared(selfservicepackage.FieldIcon) {
+		fields = append(fields, selfservicepackage.FieldIcon)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SelfServicePackageMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SelfServicePackageMutation) ClearField(name string) error {
+	switch name {
+	case selfservicepackage.FieldDescription:
+		m.ClearDescription()
+		return nil
+	case selfservicepackage.FieldCategory:
+		m.ClearCategory()
+		return nil
+	case selfservicepackage.FieldVersion:
+		m.ClearVersion()
+		return nil
+	case selfservicepackage.FieldSourceURL:
+		m.ClearSourceURL()
+		return nil
+	case selfservicepackage.FieldFilePath:
+		m.ClearFilePath()
+		return nil
+	case selfservicepackage.FieldChecksumSha256:
+		m.ClearChecksumSha256()
+		return nil
+	case selfservicepackage.FieldSilentArgs:
+		m.ClearSilentArgs()
+		return nil
+	case selfservicepackage.FieldIcon:
+		m.ClearIcon()
+		return nil
+	}
+	return fmt.Errorf("unknown SelfServicePackage nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SelfServicePackageMutation) ResetField(name string) error {
+	switch name {
+	case selfservicepackage.FieldName:
+		m.ResetName()
+		return nil
+	case selfservicepackage.FieldDescription:
+		m.ResetDescription()
+		return nil
+	case selfservicepackage.FieldCategory:
+		m.ResetCategory()
+		return nil
+	case selfservicepackage.FieldVersion:
+		m.ResetVersion()
+		return nil
+	case selfservicepackage.FieldPackageType:
+		m.ResetPackageType()
+		return nil
+	case selfservicepackage.FieldSourceType:
+		m.ResetSourceType()
+		return nil
+	case selfservicepackage.FieldSourceURL:
+		m.ResetSourceURL()
+		return nil
+	case selfservicepackage.FieldFilePath:
+		m.ResetFilePath()
+		return nil
+	case selfservicepackage.FieldChecksumSha256:
+		m.ResetChecksumSha256()
+		return nil
+	case selfservicepackage.FieldExecutionContext:
+		m.ResetExecutionContext()
+		return nil
+	case selfservicepackage.FieldSilentArgs:
+		m.ResetSilentArgs()
+		return nil
+	case selfservicepackage.FieldIcon:
+		m.ResetIcon()
+		return nil
+	case selfservicepackage.FieldEnabled:
+		m.ResetEnabled()
+		return nil
+	case selfservicepackage.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case selfservicepackage.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown SelfServicePackage field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SelfServicePackageMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SelfServicePackageMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SelfServicePackageMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SelfServicePackageMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SelfServicePackageMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SelfServicePackageMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SelfServicePackageMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown SelfServicePackage unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SelfServicePackageMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown SelfServicePackage edge %s", name)
 }
 
 // ServerMutation represents an operation that mutates the Server nodes in the graph.

@@ -84,6 +84,9 @@ type Revocation func(*sql.Selector)
 // Rustdesk is the predicate function for rustdesk builders.
 type Rustdesk func(*sql.Selector)
 
+// SelfServicePackage is the predicate function for selfservicepackage builders.
+type SelfServicePackage func(*sql.Selector)
+
 // Server is the predicate function for server builders.
 type Server func(*sql.Selector)
 
