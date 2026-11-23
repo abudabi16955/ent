@@ -22,6 +22,7 @@ import (
 	"github.com/open-uem/ent/revocation"
 	"github.com/open-uem/ent/rustdesk"
 	"github.com/open-uem/ent/schema"
+	"github.com/open-uem/ent/selfservicepackage"
 	"github.com/open-uem/ent/sessions"
 	"github.com/open-uem/ent/settings"
 	"github.com/open-uem/ent/site"
@@ -394,6 +395,34 @@ func init() {
 	rustdeskDescTemporaryPasswordLength := rustdeskFields[8].Descriptor()
 	// rustdesk.DefaultTemporaryPasswordLength holds the default value on creation for the temporary_password_length field.
 	rustdesk.DefaultTemporaryPasswordLength = rustdeskDescTemporaryPasswordLength.Default.(int)
+	selfservicepackageFields := schema.SelfServicePackage{}.Fields()
+	_ = selfservicepackageFields
+	// selfservicepackageDescName is the schema descriptor for name field.
+	selfservicepackageDescName := selfservicepackageFields[1].Descriptor()
+	// selfservicepackage.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	selfservicepackage.NameValidator = selfservicepackageDescName.Validators[0].(func(string) error)
+	// selfservicepackageDescCategory is the schema descriptor for category field.
+	selfservicepackageDescCategory := selfservicepackageFields[3].Descriptor()
+	// selfservicepackage.DefaultCategory holds the default value on creation for the category field.
+	selfservicepackage.DefaultCategory = selfservicepackageDescCategory.Default.(string)
+	// selfservicepackageDescEnabled is the schema descriptor for enabled field.
+	selfservicepackageDescEnabled := selfservicepackageFields[13].Descriptor()
+	// selfservicepackage.DefaultEnabled holds the default value on creation for the enabled field.
+	selfservicepackage.DefaultEnabled = selfservicepackageDescEnabled.Default.(bool)
+	// selfservicepackageDescCreatedAt is the schema descriptor for created_at field.
+	selfservicepackageDescCreatedAt := selfservicepackageFields[14].Descriptor()
+	// selfservicepackage.DefaultCreatedAt holds the default value on creation for the created_at field.
+	selfservicepackage.DefaultCreatedAt = selfservicepackageDescCreatedAt.Default.(func() time.Time)
+	// selfservicepackageDescUpdatedAt is the schema descriptor for updated_at field.
+	selfservicepackageDescUpdatedAt := selfservicepackageFields[15].Descriptor()
+	// selfservicepackage.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	selfservicepackage.DefaultUpdatedAt = selfservicepackageDescUpdatedAt.Default.(func() time.Time)
+	// selfservicepackage.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	selfservicepackage.UpdateDefaultUpdatedAt = selfservicepackageDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// selfservicepackageDescID is the schema descriptor for id field.
+	selfservicepackageDescID := selfservicepackageFields[0].Descriptor()
+	// selfservicepackage.DefaultID holds the default value on creation for the id field.
+	selfservicepackage.DefaultID = selfservicepackageDescID.Default.(func() uuid.UUID)
 	sessionsFields := schema.Sessions{}.Fields()
 	_ = sessionsFields
 	// sessionsDescData is the schema descriptor for data field.
